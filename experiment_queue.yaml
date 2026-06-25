@@ -1,0 +1,49 @@
+pending:
+  - name: optional_repeated_trials
+    status_note: repeat selected b8 real-Qwen points if GPU time permits
+  - name: optional_block_level_cache_metrics
+    status_note: add block-level cache allocation or eviction metrics only if SGLang exposes stable fields
+running: null
+done:
+  - name: smoke_mock_pipeline
+    run_id: 20260623-184136-no_control-mock-pipeline-b2
+    status_note: pipeline validation only, not a Qwen result
+  - name: smoke_qwen3_32b_bf16
+    run_id: 20260623-221042-no_control-Qwen3-32B-BF16-b2
+    status_note: real Qwen3-32B BF16 smoke succeeded on single GPU, TP=1
+  - name: baseline_no_control_b8
+    run_id: 20260623-221314-no_control-Qwen3-32B-b8
+    status_note: latency_s=181.51342870807275
+  - name: request_cap_1_b8
+    run_id: 20260623-224424-request-cap-1-Qwen3-32B-b8
+    status_note: latency_s=335.31575924903154
+  - name: request_cap_2_b8
+    run_id: 20260623-221617-request_cap-Qwen3-32B-b8
+    status_note: latency_s=238.07252060389146
+  - name: request_cap_4_b8
+    run_id: 20260623-225031-request-cap-4-Qwen3-32B-b8
+    status_note: latency_s=195.78105898504145
+  - name: request_cap_8_b8
+    run_id: 20260623-225415-request-cap-8-Qwen3-32B-b8
+    status_note: latency_s=181.93129083397798
+  - name: fixed_window_2_b8
+    run_id: 20260623-225754-fixed-window-2-Qwen3-32B-b8
+    status_note: latency_s=251.80036693695
+  - name: fixed_window_4_b8
+    run_id: 20260623-222107-fixed_window-Qwen3-32B-b8
+    status_note: latency_s=200.24444863805547
+  - name: fixed_window_8_b8
+    run_id: 20260623-230240-fixed-window-8-Qwen3-32B-b8
+    status_note: latency_s=182.33982133702375
+  - name: fixed_window_16_b8
+    run_id: 20260623-230625-fixed-window-16-effective-8-Qwen3-32B-b8
+    status_note: configured window 16 clamped to effective window 8, latency_s=181.9183734988328
+  - name: concur_dynamic_b8
+    run_id: 20260623-222503-concur_dynamic-Qwen3-32B-b8
+    status_note: latency_s=200.29479524795897
+  - name: parse_exact_sglang_metrics
+    status_note: generated SGLang request/scheduler CSVs and exact token usage/queue figures from retained server logs
+failed:
+  - name: smoke_qwen3_32b_bf16_initial
+    run_id: 20260623-220318-no_control-Qwen3-32B-BF16-b2
+    status_note: connection refused before final server lifecycle fix; retained for diagnosis

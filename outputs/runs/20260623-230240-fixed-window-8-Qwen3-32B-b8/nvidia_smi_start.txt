@@ -1,0 +1,45 @@
+Tue Jun 23 23:02:40 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.20             Driver Version: 580.126.20     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:21:00.0 Off |                    0 |
+| N/A   43C    P0             96W /  600W |   84629MiB /  97887MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:41:00.0 Off |                    0 |
+| N/A   33C    P0             92W /  600W |   20797MiB /  97887MiB |      1%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:A1:00.0 Off |                    0 |
+| N/A   34C    P0             93W /  600W |   12704MiB /  97887MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   33C    P0             93W /  600W |   22152MiB /  97887MiB |      1%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    0   N/A  N/A         3055949      C   sglang::scheduler                     84606MiB |
+|    1   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    1   N/A  N/A         3117607      C   .venv/bin/python                       4586MiB |
+|    1   N/A  N/A         3125336      C   .venv/bin/python                       8088MiB |
+|    1   N/A  N/A         3126390      C   .venv/bin/python                       8088MiB |
+|    2   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    2   N/A  N/A         3118100      C   .venv/bin/python                       4586MiB |
+|    2   N/A  N/A         3125789      C   .venv/bin/python                       8088MiB |
+|    3   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    3   N/A  N/A         3113001      C   .venv/bin/python                       6040MiB |
+|    3   N/A  N/A         3113809      C   .venv/bin/python                       6040MiB |
+|    3   N/A  N/A         3121533      C   .venv/bin/python                       5016MiB |
+|    3   N/A  N/A         3122155      C   .venv/bin/python                       5016MiB |
++-----------------------------------------------------------------------------------------+

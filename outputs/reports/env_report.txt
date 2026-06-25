@@ -1,0 +1,112 @@
+# Environment Report
+
+timestamp: 2026-06-23T22:12:09+08:00
+pwd: /data/3.8T-1/yue
+CONCUR_ROOT: /data/3.8T-1/yue
+CONCUR_REPRO_ROOT: /data/3.8T-1/yue/concur_qwen_repro
+python: /data/3.8T-1/yue/envs/sglang/bin/python
+Python 3.12.13
+
+## Boundary Check
+HOME /data/3.8T-1/yue OK
+TMPDIR /data/3.8T-1/yue/.tmp OK
+XDG_CACHE_HOME /data/3.8T-1/yue/.cache OK
+HF_HOME /data/3.8T-1/yue/.cache/huggingface OK
+HUGGINGFACE_HUB_CACHE /data/3.8T-1/yue/.cache/huggingface/hub OK
+TRANSFORMERS_CACHE /data/3.8T-1/yue/.cache/huggingface/transformers OK
+TORCH_HOME /data/3.8T-1/yue/.cache/torch OK
+PIP_CACHE_DIR /data/3.8T-1/yue/.cache/pip OK
+UV_CACHE_DIR /data/3.8T-1/yue/.cache/uv OK
+CONDA_PKGS_DIRS /data/3.8T-1/yue/.cache/conda_pkgs OK
+
+## Python Packages
+torch: 2.11.0+cu130
+sglang: 0.5.13.post1
+transformers: 5.8.1
+yaml: 6.0.1
+httpx: 0.28.1
+aiohttp: 3.14.1
+pandas: 3.0.3
+matplotlib: 3.11.0
+
+## Model Paths
+62G	/data/3.8T-1/yue/models/Qwen3-32B
+/data/3.8T-1/yue/models/Qwen3-32B/config.json
+/data/3.8T-1/yue/models/Qwen3-32B/tokenizer.json
+
+## NVIDIA SMI
+Tue Jun 23 22:12:16 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.20             Driver Version: 580.126.20     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:21:00.0 Off |                    0 |
+| N/A   31C    P0             90W /  600W |   84283MiB /  97887MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:41:00.0 Off |                    0 |
+| N/A   34C    P0            135W /  600W |   36291MiB /  97887MiB |     91%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:A1:00.0 Off |                    0 |
+| N/A   34C    P0            136W /  600W |   19674MiB /  97887MiB |     62%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   34C    P0            139W /  600W |   24430MiB /  97887MiB |     92%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    0   N/A  N/A         3055949      C   sglang::scheduler                     84260MiB |
+|    1   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    1   N/A  N/A         3057454      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3060138      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3060217      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3060233      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3060278      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3060322      C   .venv/bin/python                       6040MiB |
+|    2   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    2   N/A  N/A         3067908      C   .venv/bin/python                       4586MiB |
+|    2   N/A  N/A         3068548      C   .venv/bin/python                       5016MiB |
+|    2   N/A  N/A         3069175      C   .venv/bin/python                       5016MiB |
+|    2   N/A  N/A         3069759      C   .venv/bin/python                       5016MiB |
+|    3   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    3   N/A  N/A         3064591      C   .venv/bin/python                       6040MiB |
+|    3   N/A  N/A         3064705      C   .venv/bin/python                       4586MiB |
+|    3   N/A  N/A         3064894      C   .venv/bin/python                       4586MiB |
+|    3   N/A  N/A         3065142      C   .venv/bin/python                       4586MiB |
+|    3   N/A  N/A         3067372      C   .venv/bin/python                       4586MiB |
++-----------------------------------------------------------------------------------------+
+
+## NVIDIA PMON
+# gpu         pid   type     sm    mem    enc    dec    jpg    ofa    command 
+# Idx           #    C/G      %      %      %      %      %      %    name 
+    0     895004     G      -      -      -      -      -      -    Xorg           
+    0    3055949     C      -      -      -      -      -      -    sglang::schedul
+    1     895004     G      -      -      -      -      -      -    Xorg           
+    1    3057454     C      -      -      -      -      -      -    python         
+    1    3060138     C      -      -      -      -      -      -    python         
+    1    3060217     C     49      3      -      -      -      -    python         
+    1    3060233     C      9      0      -      -      -      -    python         
+    1    3060278     C     12      1      -      -      -      -    python         
+    1    3060322     C      -      -      -      -      -      -    python         
+    2     895004     G      -      -      -      -      -      -    Xorg           
+    2    3067908     C     11      0      -      -      -      -    python         
+    2    3068548     C     16      1      -      -      -      -    python         
+    2    3069175     C     23      1      -      -      -      -    python         
+    2    3069759     C     19      1      -      -      -      -    python         
+    3     895004     G      -      -      -      -      -      -    Xorg           
+    3    3064591     C     63      3      -      -      -      -    python         
+    3    3064705     C     13      0      -      -      -      -    python         
+    3    3064894     C     12      0      -      -      -      -    python         
+    3    3065142     C      -      -      -      -      -      -    python         
+    3    3067372     C      -      -      -      -      -      -    python         

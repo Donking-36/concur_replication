@@ -1,0 +1,7 @@
+{
+  "message": "<urlopen error [Errno 111] Connection refused>",
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+  "status": "failed",
+  "type": "URLError"
+}

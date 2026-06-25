@@ -1,0 +1,2 @@
+{"agent_id": 0, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "no_control", "timestamp": 1782223399.290901}
+{"agent_id": 1, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "no_control", "timestamp": 1782223399.2947273}

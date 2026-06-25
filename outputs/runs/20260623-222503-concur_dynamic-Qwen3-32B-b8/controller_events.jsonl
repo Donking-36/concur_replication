@@ -1,0 +1,8 @@
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 4, "action": "increase", "active_agents": 1, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 7, "reason": "U_t < U_low", "timestamp": 1782224704.2504046}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 2, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 6, "reason": "update_interval", "timestamp": 1782224704.2541463}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 3, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 5, "reason": "update_interval", "timestamp": 1782224704.2570138}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 4, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 4, "reason": "update_interval", "timestamp": 1782224704.2588167}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 5, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 3, "reason": "update_interval", "timestamp": 1782224704.2607691}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 6, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 2, "reason": "update_interval", "timestamp": 1782224704.2625108}
+{"H_t": 1.0, "U_t": 0.3275146484375, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 6, "finished_agents": 1, "metric_type": "proxy", "pending_agents": 1, "reason": "within_band", "timestamp": 1782224815.859946}
+{"H_t": 1.0, "U_t": 0.3275146484375, "W_next": 6, "W_t": 6, "action": "admit", "active_agents": 6, "finished_agents": 2, "metric_type": "proxy", "pending_agents": 0, "reason": "update_interval", "timestamp": 1782224816.079092}

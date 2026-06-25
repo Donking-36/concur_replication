@@ -1,0 +1,5 @@
+timestamp, index, name, memory.used [MiB], memory.total [MiB], utilization.gpu [%], power.draw [W], temperature.gpu
+2026/06/23 22:03:19.081, 0, NVIDIA RTX PRO 6000 Blackwell Server Edition, 17 MiB, 97887 MiB, 0 %, 38.48 W, 28
+2026/06/23 22:03:19.084, 1, NVIDIA RTX PRO 6000 Blackwell Server Edition, 17 MiB, 97887 MiB, 0 %, 38.67 W, 26
+2026/06/23 22:03:19.088, 2, NVIDIA RTX PRO 6000 Blackwell Server Edition, 17 MiB, 97887 MiB, 0 %, 37.90 W, 27
+2026/06/23 22:03:19.091, 3, NVIDIA RTX PRO 6000 Blackwell Server Edition, 17 MiB, 97887 MiB, 0 %, 39.06 W, 26

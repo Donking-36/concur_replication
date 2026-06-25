@@ -1,0 +1,8 @@
+alpha: 2
+beta: 0.5
+U_low: 0.2
+U_high: 0.5
+H_thresh: 0.2
+W_0: 4
+W_min: 1
+update_interval_s: 1

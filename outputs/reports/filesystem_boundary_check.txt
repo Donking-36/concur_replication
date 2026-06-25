@@ -1,0 +1,10 @@
+HOME /data/3.8T-1/yue OK
+TMPDIR /data/3.8T-1/yue/.tmp OK
+XDG_CACHE_HOME /data/3.8T-1/yue/.cache OK
+HF_HOME /data/3.8T-1/yue/.cache/huggingface OK
+HUGGINGFACE_HUB_CACHE /data/3.8T-1/yue/.cache/huggingface/hub OK
+TRANSFORMERS_CACHE /data/3.8T-1/yue/.cache/huggingface/transformers OK
+TORCH_HOME /data/3.8T-1/yue/.cache/torch OK
+PIP_CACHE_DIR /data/3.8T-1/yue/.cache/pip OK
+UV_CACHE_DIR /data/3.8T-1/yue/.cache/uv OK
+CONDA_PKGS_DIRS /data/3.8T-1/yue/.cache/conda_pkgs OK

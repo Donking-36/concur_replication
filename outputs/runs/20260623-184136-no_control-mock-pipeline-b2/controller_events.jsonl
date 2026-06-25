@@ -1,0 +1,2 @@
+{"H_t": 0.0, "U_t": 0.0, "W_next": 2, "W_t": 2, "action": "admit", "active_agents": 1, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 1, "reason": "no_control", "timestamp": 1782211296.33115}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 2, "W_t": 2, "action": "admit", "active_agents": 2, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 0, "reason": "no_control", "timestamp": 1782211296.331725}

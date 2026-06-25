@@ -1,0 +1,17 @@
+{
+  "backend": "openai",
+  "completed_agents_per_second": 0.03360320619829332,
+  "end_to_end_batch_latency_s": 238.07252060389146,
+  "max_new_tokens": 64,
+  "mean_agent_latency_s": 219.10586169362068,
+  "mock_result_excluded_from_qwen_claims": false,
+  "model": "/data/3.8T-1/yue/models/Qwen3-32B",
+  "num_agents": 8,
+  "num_steps": 8,
+  "observation_tokens_per_step": 256,
+  "p95_agent_latency_s": 238.06500697135925,
+  "run_id": "20260623-221617-request_cap-Qwen3-32B-b8",
+  "served_model_name": "qwen3-32b",
+  "status": "success",
+  "strategy": "request_cap"
+}

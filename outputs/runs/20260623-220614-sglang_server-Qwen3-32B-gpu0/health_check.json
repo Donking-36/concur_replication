@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "base_url": "http://127.0.0.1:30000",
+  "pid": 3055793,
+  "latency_s": 105.25476717948914,
+  "response": {
+    "id": "0981075307c547d8ade6819a48ae1047",
+    "object": "chat.completion",
+    "created": 1782223681,
+    "model": "qwen3-32b",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<think>\nOkay,",
+          "reasoning_content": null,
+          "tool_calls": null
+        },
+        "logprobs": null,
+        "finish_reason": "length",
+        "matched_stop": null
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 12,
+      "total_tokens": 16,
+      "completion_tokens": 4,
+      "prompt_tokens_details": null,
+      "reasoning_tokens": 0
+    },
+    "metadata": {
+      "weight_version": "default"
+    }
+  }
+}

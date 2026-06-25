@@ -1,0 +1,2 @@
+/data/3.8T-1/yue/concur_qwen_repro/src/concur_repro/run_experiment.py --config /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/request_cap_2_b8.yaml
+config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/request_cap_2_b8.yaml

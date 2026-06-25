@@ -1,0 +1,16 @@
+backend: mock
+model: mock
+model_label: mock-pipeline
+served_model_name: mock
+strategy: no_control
+num_agents: 2
+num_steps: 2
+observation_tokens_per_step: 128
+max_new_tokens: 32
+tool_wait_min_ms: 100
+tool_wait_max_ms: 250
+temperature: 0
+seed: 0
+sample_gpu: true
+mock_delay_ms: 25
+kv_proxy_budget_tokens: 1024

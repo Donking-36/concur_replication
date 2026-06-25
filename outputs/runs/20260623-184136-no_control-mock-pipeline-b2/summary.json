@@ -1,0 +1,17 @@
+{
+  "backend": "mock",
+  "completed_agents_per_second": 4.3329085046449105,
+  "end_to_end_batch_latency_s": 0.4615837140008807,
+  "max_new_tokens": 32,
+  "mean_agent_latency_s": 0.40960490703582764,
+  "mock_result_excluded_from_qwen_claims": true,
+  "model": "mock",
+  "num_agents": 2,
+  "num_steps": 2,
+  "observation_tokens_per_step": 128,
+  "p95_agent_latency_s": 0.4614284038543701,
+  "run_id": "20260623-184136-no_control-mock-pipeline-b2",
+  "served_model_name": "mock",
+  "status": "success",
+  "strategy": "no_control"
+}

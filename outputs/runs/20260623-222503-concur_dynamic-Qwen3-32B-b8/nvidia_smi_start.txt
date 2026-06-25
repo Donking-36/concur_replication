@@ -1,0 +1,50 @@
+Tue Jun 23 22:25:03 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.20             Driver Version: 580.126.20     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:21:00.0 Off |                    0 |
+| N/A   41C    P0             94W /  600W |   84629MiB /  97887MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:41:00.0 Off |                    0 |
+| N/A   33C    P0             98W /  600W |   40584MiB /  97887MiB |      5%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:A1:00.0 Off |                    0 |
+| N/A   33C    P0            128W /  600W |   48678MiB /  97887MiB |      3%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   31C    P0            111W /  600W |   44152MiB /  97887MiB |     12%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    0   N/A  N/A         3055949      C   sglang::scheduler                     84606MiB |
+|    1   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    1   N/A  N/A         3060138      C   .venv/bin/python                       6040MiB |
+|    1   N/A  N/A         3081154      C   .venv/bin/python                      10136MiB |
+|    1   N/A  N/A         3083127      C   .venv/bin/python                      12184MiB |
+|    1   N/A  N/A         3083718      C   .venv/bin/python                      12184MiB |
+|    2   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    2   N/A  N/A         3077112      C   .venv/bin/python                       8088MiB |
+|    2   N/A  N/A         3078247      C   .venv/bin/python                      10136MiB |
+|    2   N/A  N/A         3078813      C   .venv/bin/python                      10136MiB |
+|    2   N/A  N/A         3079928      C   .venv/bin/python                      10136MiB |
+|    2   N/A  N/A         3081543      C   .venv/bin/python                      10136MiB |
+|    3   N/A  N/A          895004      G   /usr/lib/xorg/Xorg                        4MiB |
+|    3   N/A  N/A         3067372      C   .venv/bin/python                       4586MiB |
+|    3   N/A  N/A         3073024      C   .venv/bin/python                       5016MiB |
+|    3   N/A  N/A         3079187      C   .venv/bin/python                      10136MiB |
+|    3   N/A  N/A         3082468      C   .venv/bin/python                      12184MiB |
+|    3   N/A  N/A         3084099      C   .venv/bin/python                      12184MiB |
++-----------------------------------------------------------------------------------------+

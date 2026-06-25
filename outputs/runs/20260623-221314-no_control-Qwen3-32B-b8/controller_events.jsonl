@@ -1,0 +1,8 @@
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 1, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 7, "reason": "no_control", "timestamp": 1782223994.7999647}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 2, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 6, "reason": "no_control", "timestamp": 1782223994.803969}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 3, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 5, "reason": "no_control", "timestamp": 1782223994.8070753}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 4, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 4, "reason": "no_control", "timestamp": 1782223994.808796}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 5, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 3, "reason": "no_control", "timestamp": 1782223994.81062}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 6, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 2, "reason": "no_control", "timestamp": 1782223994.8124757}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 7, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 1, "reason": "no_control", "timestamp": 1782223994.8164244}
+{"H_t": 0.0, "U_t": 0.0, "W_next": 8, "W_t": 8, "action": "admit", "active_agents": 8, "finished_agents": 0, "metric_type": "proxy", "pending_agents": 0, "reason": "no_control", "timestamp": 1782223994.818418}

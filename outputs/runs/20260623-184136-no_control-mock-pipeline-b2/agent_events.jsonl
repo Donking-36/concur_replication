@@ -1,0 +1,12 @@
+{"agent_id": 0, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "no_control", "timestamp": 1782211296.3315237}
+{"agent_id": 1, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "no_control", "timestamp": 1782211296.3318622}
+{"agent_id": 0, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 0.025566190015524626, "output_tokens": 48, "step": 0, "strategy": "no_control", "timestamp": 1782211296.3579793}
+{"agent_id": 1, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 0.026416260981932282, "output_tokens": 48, "step": 0, "strategy": "no_control", "timestamp": 1782211296.3587594}
+{"agent_id": 1, "context_tokens_after_append_proxy": 210, "event": "tool_observation_appended", "observation_tokens_proxy": 128, "step": 0, "strategy": "no_control", "timestamp": 1782211296.4825702, "tool_wait_s": 0.122093261175144}
+{"agent_id": 1, "context_tokens_proxy": 477, "event": "generation_start", "step": 1, "strategy": "no_control", "timestamp": 1782211296.4831827}
+{"agent_id": 1, "context_tokens_proxy": 477, "event": "generation_end", "generation_latency_s": 0.02520698995795101, "output_tokens": 48, "step": 1, "strategy": "no_control", "timestamp": 1782211296.509195}
+{"agent_id": 0, "context_tokens_after_append_proxy": 210, "event": "tool_observation_appended", "observation_tokens_proxy": 128, "step": 0, "strategy": "no_control", "timestamp": 1782211296.5859644, "tool_wait_s": 0.22666327772875722}
+{"agent_id": 0, "context_tokens_proxy": 479, "event": "generation_start", "step": 1, "strategy": "no_control", "timestamp": 1782211296.5865283}
+{"agent_id": 0, "context_tokens_proxy": 479, "event": "generation_end", "generation_latency_s": 0.025286820018664002, "output_tokens": 48, "step": 1, "strategy": "no_control", "timestamp": 1782211296.6128154}
+{"agent_id": 1, "context_tokens_after_append_proxy": 653, "event": "tool_observation_appended", "observation_tokens_proxy": 128, "step": 1, "strategy": "no_control", "timestamp": 1782211296.6887987, "tool_wait_s": 0.17797357398528346}
+{"agent_id": 0, "context_tokens_after_append_proxy": 655, "event": "tool_observation_appended", "observation_tokens_proxy": 128, "step": 1, "strategy": "no_control", "timestamp": 1782211296.791956, "tool_wait_s": 0.178297586456874}

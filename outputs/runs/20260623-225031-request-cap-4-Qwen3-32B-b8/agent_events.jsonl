@@ -1,0 +1,192 @@
+{"agent_id": 0, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.6543596}
+{"agent_id": 1, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.6581235}
+{"agent_id": 2, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.6607656}
+{"agent_id": 3, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.662279}
+{"agent_id": 4, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.6640356}
+{"agent_id": 5, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.664723}
+{"agent_id": 6, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.6654897}
+{"agent_id": 7, "context_tokens_proxy": 34, "event": "generation_start", "step": 0, "strategy": "request_cap", "timestamp": 1782226231.668047}
+{"agent_id": 0, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.037199982907623, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226234.6951904}
+{"agent_id": 3, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.030969429994002, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226234.69586}
+{"agent_id": 1, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0343527311924845, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226234.6971085}
+{"agent_id": 2, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0331013719551265, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226234.6976714}
+{"agent_id": 1, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226234.9306958, "tool_wait_s": 0.232559567050864}
+{"agent_id": 1, "context_tokens_proxy": 920, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226234.9311323}
+{"agent_id": 3, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226235.501385, "tool_wait_s": 0.8028027019479407}
+{"agent_id": 3, "context_tokens_proxy": 922, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226235.5018928}
+{"agent_id": 2, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226235.5125685, "tool_wait_s": 0.8135558546720622}
+{"agent_id": 2, "context_tokens_proxy": 921, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226235.512964}
+{"agent_id": 0, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226235.5566719, "tool_wait_s": 0.8599796663725433}
+{"agent_id": 0, "context_tokens_proxy": 923, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226235.557069}
+{"agent_id": 5, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0054742810316384, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226237.7032971}
+{"agent_id": 4, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0057274100836366, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226237.7039194}
+{"agent_id": 7, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0042650499381125, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226237.7053292}
+{"agent_id": 6, "context_tokens_proxy": 34, "event": "generation_end", "generation_latency_s": 3.0048781398218125, "output_tokens": 64, "step": 0, "strategy": "request_cap", "timestamp": 1782226237.7060142}
+{"agent_id": 7, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226238.3504002, "tool_wait_s": 0.6427879380827266}
+{"agent_id": 7, "context_tokens_proxy": 920, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226238.3528214}
+{"agent_id": 5, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226238.4821188, "tool_wait_s": 0.7774836921075746}
+{"agent_id": 5, "context_tokens_proxy": 923, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226238.4826064}
+{"agent_id": 4, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226238.5153048, "tool_wait_s": 0.8101288087291594}
+{"agent_id": 4, "context_tokens_proxy": 919, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226238.5157275}
+{"agent_id": 6, "context_tokens_after_append_proxy": 354, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 0, "strategy": "request_cap", "timestamp": 1782226238.6925752, "tool_wait_s": 0.9841165897606806}
+{"agent_id": 6, "context_tokens_proxy": 919, "event": "generation_start", "step": 1, "strategy": "request_cap", "timestamp": 1782226238.6930633}
+{"agent_id": 1, "context_tokens_proxy": 920, "event": "generation_end", "generation_latency_s": 5.105537908151746, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226242.812017}
+{"agent_id": 0, "context_tokens_proxy": 923, "event": "generation_end", "generation_latency_s": 5.1045725389849395, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226242.813255}
+{"agent_id": 2, "context_tokens_proxy": 921, "event": "generation_end", "generation_latency_s": 5.104929888853803, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226242.8138518}
+{"agent_id": 3, "context_tokens_proxy": 922, "event": "generation_end", "generation_latency_s": 5.107208879198879, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226242.8143744}
+{"agent_id": 3, "context_tokens_after_append_proxy": 1242, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226242.9782777, "tool_wait_s": 0.16280899993181036}
+{"agent_id": 3, "context_tokens_proxy": 1812, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226242.9787977}
+{"agent_id": 2, "context_tokens_after_append_proxy": 1241, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226243.0204825, "tool_wait_s": 0.20524454652155125}
+{"agent_id": 2, "context_tokens_proxy": 1808, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226243.0209062}
+{"agent_id": 1, "context_tokens_after_append_proxy": 1240, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226243.3807976, "tool_wait_s": 0.5678414439117007}
+{"agent_id": 1, "context_tokens_proxy": 1810, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226243.381072}
+{"agent_id": 0, "context_tokens_after_append_proxy": 1243, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226243.384362, "tool_wait_s": 0.569785518741244}
+{"agent_id": 0, "context_tokens_proxy": 1811, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226243.3844864}
+{"agent_id": 4, "context_tokens_proxy": 919, "event": "generation_end", "generation_latency_s": 5.10704919998534, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226247.9237456}
+{"agent_id": 5, "context_tokens_proxy": 923, "event": "generation_end", "generation_latency_s": 5.10829104995355, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226247.9250445}
+{"agent_id": 6, "context_tokens_proxy": 919, "event": "generation_end", "generation_latency_s": 5.107987459981814, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226247.9256415}
+{"agent_id": 7, "context_tokens_proxy": 920, "event": "generation_end", "generation_latency_s": 5.110838471213356, "output_tokens": 64, "step": 1, "strategy": "request_cap", "timestamp": 1782226247.9261727}
+{"agent_id": 7, "context_tokens_after_append_proxy": 1240, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226248.0428338, "tool_wait_s": 0.1157093657527379}
+{"agent_id": 7, "context_tokens_proxy": 1809, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226248.0430574}
+{"agent_id": 6, "context_tokens_after_append_proxy": 1239, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226248.6822057, "tool_wait_s": 0.7546715446134215}
+{"agent_id": 6, "context_tokens_proxy": 1809, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226248.6827757}
+{"agent_id": 5, "context_tokens_after_append_proxy": 1243, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226248.7795305, "tool_wait_s": 0.8536243184609233}
+{"agent_id": 5, "context_tokens_proxy": 1811, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226248.7800128}
+{"agent_id": 4, "context_tokens_after_append_proxy": 1239, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 1, "strategy": "request_cap", "timestamp": 1782226248.848791, "tool_wait_s": 0.9234618303961767}
+{"agent_id": 4, "context_tokens_proxy": 1809, "event": "generation_start", "step": 2, "strategy": "request_cap", "timestamp": 1782226248.849218}
+{"agent_id": 2, "context_tokens_proxy": 1808, "event": "generation_end", "generation_latency_s": 7.456569527974352, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.3842096}
+{"agent_id": 0, "context_tokens_proxy": 1811, "event": "generation_end", "generation_latency_s": 7.456337817944586, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.3844755}
+{"agent_id": 1, "context_tokens_proxy": 1810, "event": "generation_end", "generation_latency_s": 7.456742407986894, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.3853137}
+{"agent_id": 3, "context_tokens_proxy": 1812, "event": "generation_end", "generation_latency_s": 7.4597254290711135, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.3856611}
+{"agent_id": 1, "context_tokens_after_append_proxy": 2130, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.6753237, "tool_wait_s": 0.28885930591506614}
+{"agent_id": 1, "context_tokens_proxy": 2698, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226255.6756334}
+{"agent_id": 0, "context_tokens_after_append_proxy": 2131, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226255.9624383, "tool_wait_s": 0.5760418446463711}
+{"agent_id": 0, "context_tokens_proxy": 2700, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226255.9630485}
+{"agent_id": 3, "context_tokens_after_append_proxy": 2132, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226256.0889413, "tool_wait_s": 0.7016477615399188}
+{"agent_id": 3, "context_tokens_proxy": 2700, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226256.089448}
+{"agent_id": 2, "context_tokens_after_append_proxy": 2128, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226256.1502612, "tool_wait_s": 0.7641325263493159}
+{"agent_id": 2, "context_tokens_proxy": 2695, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226256.1507885}
+{"agent_id": 7, "context_tokens_proxy": 1809, "event": "generation_end", "generation_latency_s": 7.468630803050473, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226262.8550284}
+{"agent_id": 6, "context_tokens_proxy": 1809, "event": "generation_end", "generation_latency_s": 7.469262923114002, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226262.8561275}
+{"agent_id": 4, "context_tokens_proxy": 1809, "event": "generation_end", "generation_latency_s": 7.468283852096647, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226262.8567812}
+{"agent_id": 5, "context_tokens_proxy": 1811, "event": "generation_end", "generation_latency_s": 7.468617751961574, "output_tokens": 64, "step": 2, "strategy": "request_cap", "timestamp": 1782226262.8572934}
+{"agent_id": 6, "context_tokens_after_append_proxy": 2129, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226263.4377367, "tool_wait_s": 0.5794315394252176}
+{"agent_id": 6, "context_tokens_proxy": 2698, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226263.4382625}
+{"agent_id": 7, "context_tokens_after_append_proxy": 2129, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226263.498998, "tool_wait_s": 0.6430650767402794}
+{"agent_id": 7, "context_tokens_proxy": 2699, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226263.499467}
+{"agent_id": 5, "context_tokens_after_append_proxy": 2131, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226263.6042535, "tool_wait_s": 0.7445995044959922}
+{"agent_id": 5, "context_tokens_proxy": 2699, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226263.6047337}
+{"agent_id": 4, "context_tokens_after_append_proxy": 2129, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 2, "strategy": "request_cap", "timestamp": 1782226263.8146842, "tool_wait_s": 0.9555745231300696}
+{"agent_id": 4, "context_tokens_proxy": 2696, "event": "generation_start", "step": 3, "strategy": "request_cap", "timestamp": 1782226263.8151517}
+{"agent_id": 3, "context_tokens_proxy": 2700, "event": "generation_end", "generation_latency_s": 9.97917856508866, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226272.8387268}
+{"agent_id": 1, "context_tokens_proxy": 2698, "event": "generation_end", "generation_latency_s": 9.982156716985628, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226272.8393564}
+{"agent_id": 0, "context_tokens_proxy": 2700, "event": "generation_end", "generation_latency_s": 9.980141894891858, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226272.8399253}
+{"agent_id": 2, "context_tokens_proxy": 2695, "event": "generation_end", "generation_latency_s": 9.980100844986737, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226272.8416712}
+{"agent_id": 3, "context_tokens_after_append_proxy": 3020, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226273.0698867, "tool_wait_s": 0.22933841626140616}
+{"agent_id": 3, "context_tokens_proxy": 3586, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226273.0704083}
+{"agent_id": 0, "context_tokens_after_append_proxy": 3020, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226273.160189, "tool_wait_s": 0.3191659864384033}
+{"agent_id": 0, "context_tokens_proxy": 3589, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226273.160669}
+{"agent_id": 1, "context_tokens_after_append_proxy": 3018, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226273.165351, "tool_wait_s": 0.3245596828426892}
+{"agent_id": 1, "context_tokens_proxy": 3586, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226273.1657426}
+{"agent_id": 2, "context_tokens_after_append_proxy": 3015, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226273.312512, "tool_wait_s": 0.46950052469459325}
+{"agent_id": 2, "context_tokens_proxy": 3586, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226273.3130033}
+{"agent_id": 7, "context_tokens_proxy": 2699, "event": "generation_end", "generation_latency_s": 9.993537191068754, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226282.8358786}
+{"agent_id": 5, "context_tokens_proxy": 2699, "event": "generation_end", "generation_latency_s": 9.99404967087321, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226282.8371313}
+{"agent_id": 4, "context_tokens_proxy": 2696, "event": "generation_end", "generation_latency_s": 9.99332033121027, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226282.8377163}
+{"agent_id": 6, "context_tokens_proxy": 2698, "event": "generation_end", "generation_latency_s": 9.995354562066495, "output_tokens": 64, "step": 3, "strategy": "request_cap", "timestamp": 1782226282.8382246}
+{"agent_id": 5, "context_tokens_after_append_proxy": 3019, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226283.0902205, "tool_wait_s": 0.2516312234102017}
+{"agent_id": 5, "context_tokens_proxy": 3589, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226283.090746}
+{"agent_id": 7, "context_tokens_after_append_proxy": 3019, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226283.1014457, "tool_wait_s": 0.26288970434059056}
+{"agent_id": 7, "context_tokens_proxy": 3587, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226283.1018488}
+{"agent_id": 4, "context_tokens_after_append_proxy": 3016, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226283.478911, "tool_wait_s": 0.640129478061105}
+{"agent_id": 4, "context_tokens_proxy": 3584, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226283.4794123}
+{"agent_id": 6, "context_tokens_after_append_proxy": 3018, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 3, "strategy": "request_cap", "timestamp": 1782226283.7904134, "tool_wait_s": 0.9510297525701078}
+{"agent_id": 6, "context_tokens_proxy": 3585, "event": "generation_start", "step": 4, "strategy": "request_cap", "timestamp": 1782226283.7909553}
+{"agent_id": 1, "context_tokens_proxy": 3586, "event": "generation_end", "generation_latency_s": 12.706570784095675, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.547129}
+{"agent_id": 2, "context_tokens_proxy": 3586, "event": "generation_end", "generation_latency_s": 12.707152305170894, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.5483513}
+{"agent_id": 3, "context_tokens_proxy": 3586, "event": "generation_end", "generation_latency_s": 12.710303116124123, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.5489976}
+{"agent_id": 0, "context_tokens_proxy": 3589, "event": "generation_end", "generation_latency_s": 12.708182704867795, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.5495353}
+{"agent_id": 1, "context_tokens_after_append_proxy": 3906, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.686406, "tool_wait_s": 0.13744991494917028}
+{"agent_id": 1, "context_tokens_proxy": 4476, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226295.6869676}
+{"agent_id": 3, "context_tokens_after_append_proxy": 3906, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226295.6875076, "tool_wait_s": 0.13685676214289055}
+{"agent_id": 3, "context_tokens_proxy": 4475, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226295.6878104}
+{"agent_id": 2, "context_tokens_after_append_proxy": 3906, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226296.182934, "tool_wait_s": 0.6328131921663851}
+{"agent_id": 2, "context_tokens_proxy": 4476, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226296.1834667}
+{"agent_id": 0, "context_tokens_after_append_proxy": 3909, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226296.3193302, "tool_wait_s": 0.7675020420531159}
+{"agent_id": 0, "context_tokens_proxy": 4477, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226296.319851}
+{"agent_id": 5, "context_tokens_proxy": 3589, "event": "generation_end", "generation_latency_s": 12.722271031001583, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.271351}
+{"agent_id": 7, "context_tokens_proxy": 3587, "event": "generation_end", "generation_latency_s": 12.720488670049235, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.2725747}
+{"agent_id": 4, "context_tokens_proxy": 3584, "event": "generation_end", "generation_latency_s": 12.720284529961646, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.2732358}
+{"agent_id": 6, "context_tokens_proxy": 3585, "event": "generation_end", "generation_latency_s": 12.720549090066925, "output_tokens": 64, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.2738066}
+{"agent_id": 7, "context_tokens_after_append_proxy": 3907, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.7410421, "tool_wait_s": 0.4665040237649375}
+{"agent_id": 7, "context_tokens_proxy": 4479, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226308.741531}
+{"agent_id": 6, "context_tokens_after_append_proxy": 3905, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226308.8793895, "tool_wait_s": 0.603914466509951}
+{"agent_id": 6, "context_tokens_proxy": 4472, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226308.8799162}
+{"agent_id": 5, "context_tokens_after_append_proxy": 3909, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226309.0067258, "tool_wait_s": 0.734077334282863}
+{"agent_id": 5, "context_tokens_proxy": 4476, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226309.0071592}
+{"agent_id": 4, "context_tokens_after_append_proxy": 3904, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 4, "strategy": "request_cap", "timestamp": 1782226309.2490916, "tool_wait_s": 0.9745566510706489}
+{"agent_id": 4, "context_tokens_proxy": 4473, "event": "generation_start", "step": 5, "strategy": "request_cap", "timestamp": 1782226309.2495775}
+{"agent_id": 0, "context_tokens_proxy": 4477, "event": "generation_end", "generation_latency_s": 15.689244374865666, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226323.9652958}
+{"agent_id": 3, "context_tokens_proxy": 4475, "event": "generation_end", "generation_latency_s": 15.690115686040372, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226323.96595}
+{"agent_id": 1, "context_tokens_proxy": 4476, "event": "generation_end", "generation_latency_s": 15.692489857086912, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226323.9664905}
+{"agent_id": 2, "context_tokens_proxy": 4476, "event": "generation_end", "generation_latency_s": 15.690191305009648, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226323.9683726}
+{"agent_id": 2, "context_tokens_after_append_proxy": 4796, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226324.152541, "tool_wait_s": 0.18239146287787633}
+{"agent_id": 2, "context_tokens_proxy": 5365, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226324.153094}
+{"agent_id": 0, "context_tokens_after_append_proxy": 4797, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226324.2459118, "tool_wait_s": 0.2796298357186901}
+{"agent_id": 0, "context_tokens_proxy": 5366, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226324.2463787}
+{"agent_id": 1, "context_tokens_after_append_proxy": 4796, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226324.39022, "tool_wait_s": 0.421240885849274}
+{"agent_id": 1, "context_tokens_proxy": 5364, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226324.3907077}
+{"agent_id": 3, "context_tokens_after_append_proxy": 4795, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226324.5525453, "tool_wait_s": 0.5853359206934898}
+{"agent_id": 3, "context_tokens_proxy": 5365, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226324.5530753}
+{"agent_id": 6, "context_tokens_proxy": 4472, "event": "generation_end", "generation_latency_s": 15.700854790164158, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226339.6693566}
+{"agent_id": 7, "context_tokens_proxy": 4479, "event": "generation_end", "generation_latency_s": 15.701246391050518, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226339.6700003}
+{"agent_id": 5, "context_tokens_proxy": 4476, "event": "generation_end", "generation_latency_s": 15.700582080055028, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226339.6705449}
+{"agent_id": 4, "context_tokens_proxy": 4473, "event": "generation_end", "generation_latency_s": 15.699917110148817, "output_tokens": 64, "step": 5, "strategy": "request_cap", "timestamp": 1782226339.6726265}
+{"agent_id": 6, "context_tokens_after_append_proxy": 4792, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226340.3481884, "tool_wait_s": 0.6765560138368572}
+{"agent_id": 6, "context_tokens_proxy": 5360, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226340.3487525}
+{"agent_id": 4, "context_tokens_after_append_proxy": 4793, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226340.5907297, "tool_wait_s": 0.9168490056244243}
+{"agent_id": 4, "context_tokens_proxy": 5361, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226340.591214}
+{"agent_id": 5, "context_tokens_after_append_proxy": 4796, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226340.6068988, "tool_wait_s": 0.9356832142884203}
+{"agent_id": 5, "context_tokens_proxy": 5366, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226340.6073036}
+{"agent_id": 7, "context_tokens_after_append_proxy": 4799, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 5, "strategy": "request_cap", "timestamp": 1782226340.6630378, "tool_wait_s": 0.9923503000732312}
+{"agent_id": 7, "context_tokens_proxy": 5368, "event": "generation_start", "step": 6, "strategy": "request_cap", "timestamp": 1782226340.6635082}
+{"agent_id": 1, "context_tokens_proxy": 5364, "event": "generation_end", "generation_latency_s": 14.849825110984966, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226354.52299}
+{"agent_id": 0, "context_tokens_proxy": 5366, "event": "generation_end", "generation_latency_s": 14.850974320899695, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226354.5241687}
+{"agent_id": 2, "context_tokens_proxy": 5365, "event": "generation_end", "generation_latency_s": 14.851433390984312, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226354.5248635}
+{"agent_id": 0, "context_tokens_after_append_proxy": 5686, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226354.7591314, "tool_wait_s": 0.23335408574837524}
+{"agent_id": 0, "context_tokens_proxy": 6256, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226354.7596824}
+{"agent_id": 1, "context_tokens_after_append_proxy": 5684, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226354.929502, "tool_wait_s": 0.40519074494960283}
+{"agent_id": 1, "context_tokens_proxy": 6252, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226354.9300478}
+{"agent_id": 2, "context_tokens_after_append_proxy": 5685, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226355.0168, "tool_wait_s": 0.4910194728692875}
+{"agent_id": 2, "context_tokens_proxy": 6254, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226355.0172267}
+{"agent_id": 3, "context_tokens_proxy": 5365, "event": "generation_end", "generation_latency_s": 29.67825924209319, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226369.3527915}
+{"agent_id": 6, "context_tokens_proxy": 5360, "event": "generation_end", "generation_latency_s": 14.828611131990328, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226369.3540237}
+{"agent_id": 4, "context_tokens_proxy": 5361, "event": "generation_end", "generation_latency_s": 14.826907610986382, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226369.354614}
+{"agent_id": 3, "context_tokens_after_append_proxy": 5685, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226369.9990087, "tool_wait_s": 0.6447334456136637}
+{"agent_id": 3, "context_tokens_proxy": 6254, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226369.9994876}
+{"agent_id": 4, "context_tokens_after_append_proxy": 5681, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226370.0773442, "tool_wait_s": 0.7219793791776343}
+{"agent_id": 4, "context_tokens_proxy": 6251, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226370.077833}
+{"agent_id": 6, "context_tokens_after_append_proxy": 5680, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226370.2026832, "tool_wait_s": 0.8472082404414488}
+{"agent_id": 6, "context_tokens_proxy": 6251, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226370.2031589}
+{"agent_id": 0, "context_tokens_proxy": 6256, "event": "generation_end", "generation_latency_s": 15.643907567951828, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226385.0000222}
+{"agent_id": 5, "context_tokens_proxy": 5366, "event": "generation_end", "generation_latency_s": 30.473515750141814, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226385.0006726}
+{"agent_id": 7, "context_tokens_proxy": 5368, "event": "generation_end", "generation_latency_s": 15.646161779062822, "output_tokens": 64, "step": 6, "strategy": "request_cap", "timestamp": 1782226385.0021694}
+{"agent_id": 7, "context_tokens_after_append_proxy": 5688, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226385.158043, "tool_wait_s": 0.1542058212552467}
+{"agent_id": 7, "context_tokens_proxy": 6257, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226385.1585581}
+{"agent_id": 5, "context_tokens_after_append_proxy": 5686, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 6, "strategy": "request_cap", "timestamp": 1782226385.5477283, "tool_wait_s": 0.5453923134794936}
+{"agent_id": 5, "context_tokens_proxy": 6253, "event": "generation_start", "step": 7, "strategy": "request_cap", "timestamp": 1782226385.5482001}
+{"agent_id": 0, "context_tokens_after_append_proxy": 6576, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226385.9352665, "tool_wait_s": 0.9336815726563127}
+{"agent_id": 2, "context_tokens_proxy": 6254, "event": "generation_end", "generation_latency_s": 17.2722908470314, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226402.274378}
+{"agent_id": 1, "context_tokens_proxy": 6252, "event": "generation_end", "generation_latency_s": 32.918219906045124, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226402.2750306}
+{"agent_id": 3, "context_tokens_proxy": 6254, "event": "generation_end", "generation_latency_s": 17.272262546932325, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226402.275565}
+{"agent_id": 3, "context_tokens_after_append_proxy": 6574, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226402.421474, "tool_wait_s": 0.14395764485996723}
+{"agent_id": 1, "context_tokens_after_append_proxy": 6572, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226402.8058667, "tool_wait_s": 0.5290805346134829}
+{"agent_id": 2, "context_tokens_after_append_proxy": 6574, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226403.0249915, "tool_wait_s": 0.7491360478899718}
+{"agent_id": 4, "context_tokens_proxy": 6251, "event": "generation_end", "generation_latency_s": 34.516929814824834, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226419.5224528}
+{"agent_id": 5, "context_tokens_proxy": 6253, "event": "generation_end", "generation_latency_s": 17.24550380697474, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226419.5228112}
+{"agent_id": 7, "context_tokens_proxy": 6257, "event": "generation_end", "generation_latency_s": 17.245922857895494, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226419.5230582}
+{"agent_id": 4, "context_tokens_after_append_proxy": 6571, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226420.0741687, "tool_wait_s": 0.550305204394385}
+{"agent_id": 7, "context_tokens_after_append_proxy": 6577, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226420.2503667, "tool_wait_s": 0.7253878408981531}
+{"agent_id": 5, "context_tokens_after_append_proxy": 6573, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226420.3404148, "tool_wait_s": 0.8163982295200635}
+{"agent_id": 6, "context_tokens_proxy": 6251, "event": "generation_end", "generation_latency_s": 25.036057787947357, "output_tokens": 64, "step": 7, "strategy": "request_cap", "timestamp": 1782226427.312736}
+{"agent_id": 6, "context_tokens_after_append_proxy": 6571, "event": "tool_observation_appended", "observation_tokens_proxy": 256, "step": 7, "strategy": "request_cap", "timestamp": 1782226427.4344325, "tool_wait_s": 0.12002194410285237}

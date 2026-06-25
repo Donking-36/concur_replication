@@ -1,0 +1,6 @@
+model_name: Qwen3-32B
+model_path: /data/3.8T-1/yue/models/Qwen3-32B
+served_model_name: qwen3-32b
+tensor_parallel_size: 1
+dtype: bfloat16
+quantization: null

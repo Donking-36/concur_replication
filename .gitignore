@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.DS_Store
+models/
+.cache/
+.tmp/
+envs/
+.venv/
+venv/
+outputs/runs/**/env.txt
+outputs/runs/**/*.pid
