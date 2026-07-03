@@ -60,7 +60,7 @@ def _write_csv(path: Path, fields: list[str], rows: list[dict[str, Any]]) -> Non
     out = assert_under_root(path)
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({field: _csv_value(row.get(field)) for field in fields})
@@ -133,6 +133,130 @@ def _find_window(windows: list[RunWindow], timestamp: float | None) -> RunWindow
     return None
 
 
+def _generation_index(run_dir: Path) -> list[dict[str, Any]]:
+    serving_path = run_dir / "serving_metrics.jsonl"
+    serving_rows = []
+    if serving_path.exists():
+        with serving_path.open("r", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                row = json.loads(line)
+                start_ts = _to_float(row.get("request_started_ts"))
+                finish_ts = _to_float(row.get("request_finished_ts"))
+                agent_id = _to_int(row.get("agent_id"))
+                step = _to_int(row.get("step"))
+                if start_ts is None or finish_ts is None or agent_id is None or step is None:
+                    continue
+                serving_rows.append(
+                    {
+                        "agent_id": agent_id,
+                        "step": step,
+                        "generation_start_ts": start_ts,
+                        "generation_end_ts": finish_ts,
+                        "workload_version": row.get("workload_version"),
+                        "mapping_source": "serving_metrics_request_window",
+                    }
+                )
+    if serving_rows:
+        return sorted(serving_rows, key=lambda row: row["generation_start_ts"])
+
+    events_path = run_dir / "agent_events.jsonl"
+    rows = []
+    if not events_path.exists():
+        return rows
+    starts: dict[tuple[int, int], dict[str, Any]] = {}
+    with events_path.open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            row = json.loads(line)
+            if row.get("event") != "generation_start":
+                continue
+            agent_id = _to_int(row.get("agent_id"))
+            step = _to_int(row.get("step"))
+            ts = _to_float(row.get("timestamp"))
+            if agent_id is None or step is None or ts is None:
+                continue
+            starts[(agent_id, step)] = {
+                "agent_id": agent_id,
+                "step": step,
+                "generation_start_ts": ts,
+                "workload_version": row.get("workload_version"),
+                "mapping_source": "agent_events_generation_window",
+            }
+    with events_path.open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            row = json.loads(line)
+            if row.get("event") != "generation_end":
+                continue
+            agent_id = _to_int(row.get("agent_id"))
+            step = _to_int(row.get("step"))
+            ts = _to_float(row.get("timestamp"))
+            if agent_id is None or step is None or ts is None:
+                continue
+            start_row = starts.get((agent_id, step))
+            if not start_row:
+                continue
+            out = dict(start_row)
+            out["generation_end_ts"] = ts
+            rows.append(out)
+    return sorted(rows, key=lambda row: row["generation_start_ts"])
+
+
+def _attach_generation_mappings(rows: list[dict[str, Any]], windows: list[RunWindow]) -> list[dict[str, Any]]:
+    windows_by_run = {window.run_id: window for window in windows}
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault(str(row["run_id"]), []).append(row)
+    for run_id, run_rows in grouped.items():
+        window = windows_by_run.get(run_id)
+        if window is None:
+            continue
+        generations = _generation_index(window.run_dir)
+        unused = set(range(len(generations)))
+        for request_row in sorted(run_rows, key=lambda row: float(row.get("request_received_ts") or 0.0)):
+            received = _to_float(request_row.get("request_received_ts"))
+            finished = _to_float(request_row.get("request_finished_ts"))
+            if received is None:
+                continue
+            best_idx = None
+            best_score = None
+            for idx in sorted(unused):
+                generation = generations[idx]
+                start = float(generation["generation_start_ts"])
+                end = float(generation.get("generation_end_ts") or start)
+                inside = start - 5.0 <= received <= end + 5.0
+                finish_inside = finished is None or finished <= end + 10.0
+                if not inside or not finish_inside:
+                    continue
+                score = abs(received - start)
+                if best_score is None or score < best_score:
+                    best_idx = idx
+                    best_score = score
+            if best_idx is None:
+                continue
+            best = generations[best_idx]
+            unused.remove(best_idx)
+            request_row.update(
+                {
+                    "agent_id": best.get("agent_id"),
+                    "step": best.get("step"),
+                    "generation_start_ts": best.get("generation_start_ts"),
+                    "generation_end_ts": best.get("generation_end_ts"),
+                    "workload_version": best.get("workload_version"),
+                    "mapping_method": best.get("mapping_source") or "timestamp_one_to_one",
+                    "mapping_delta_s": best_score,
+                }
+            )
+    return rows
+
+
 def parse_request_metric_rows(server_dirs: list[Path], windows: list[RunWindow]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for server_dir in server_dirs:
@@ -165,8 +289,7 @@ def parse_request_metric_rows(server_dirs: list[Path], windows: list[RunWindow])
                         cached_details = {}
                     prompt_tokens = _to_int(record.get("prompt_tokens"))
                     cached_tokens = _to_int(record.get("cached_tokens")) or 0
-                    rows.append(
-                        {
+                    row = {
                             "run_id": window.run_id,
                             "controller_label": window.controller_label,
                             "server_run_id": server_dir.name,
@@ -186,8 +309,8 @@ def parse_request_metric_rows(server_dirs: list[Path], windows: list[RunWindow])
                             "finish_reason_type": (record.get("finish_reason") or {}).get("type") if isinstance(record.get("finish_reason"), dict) else None,
                             "metric_file": str(path),
                         }
-                    )
-    return rows
+                    rows.append(row)
+    return _attach_generation_mappings(rows, windows)
 
 
 def summarize_request_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -316,6 +439,13 @@ def write_sglang_log_artifacts(
             "controller_label",
             "server_run_id",
             "request_id",
+            "agent_id",
+            "step",
+            "workload_version",
+            "mapping_method",
+            "mapping_delta_s",
+            "generation_start_ts",
+            "generation_end_ts",
             "request_received_ts",
             "request_finished_ts",
             "prompt_tokens",

@@ -1,49 +1,421 @@
-pending:
-  - name: optional_repeated_trials
-    status_note: repeat selected b8 real-Qwen points if GPU time permits
-  - name: optional_block_level_cache_metrics
-    status_note: add block-level cache allocation or eviction metrics only if SGLang exposes stable fields
+schema_version: 2
+updated_at: '2026-07-03T23:42:06+08:00'
+policy:
+  root: /data/3.8T-1/yue
+  single_gpu_only: true
+  sglang_tensor_parallel_size: 1
+  no_sudo: true
+  no_external_write_roots: true
+  atomic_updates: true
+pending: []
 running: null
 done:
-  - name: smoke_mock_pipeline
-    run_id: 20260623-184136-no_control-mock-pipeline-b2
-    status_note: pipeline validation only, not a Qwen result
-  - name: smoke_qwen3_32b_bf16
-    run_id: 20260623-221042-no_control-Qwen3-32B-BF16-b2
-    status_note: real Qwen3-32B BF16 smoke succeeded on single GPU, TP=1
-  - name: baseline_no_control_b8
-    run_id: 20260623-221314-no_control-Qwen3-32B-b8
-    status_note: latency_s=181.51342870807275
-  - name: request_cap_1_b8
-    run_id: 20260623-224424-request-cap-1-Qwen3-32B-b8
-    status_note: latency_s=335.31575924903154
-  - name: request_cap_2_b8
-    run_id: 20260623-221617-request_cap-Qwen3-32B-b8
-    status_note: latency_s=238.07252060389146
-  - name: request_cap_4_b8
-    run_id: 20260623-225031-request-cap-4-Qwen3-32B-b8
-    status_note: latency_s=195.78105898504145
-  - name: request_cap_8_b8
-    run_id: 20260623-225415-request-cap-8-Qwen3-32B-b8
-    status_note: latency_s=181.93129083397798
-  - name: fixed_window_2_b8
-    run_id: 20260623-225754-fixed-window-2-Qwen3-32B-b8
-    status_note: latency_s=251.80036693695
-  - name: fixed_window_4_b8
-    run_id: 20260623-222107-fixed_window-Qwen3-32B-b8
-    status_note: latency_s=200.24444863805547
-  - name: fixed_window_8_b8
-    run_id: 20260623-230240-fixed-window-8-Qwen3-32B-b8
-    status_note: latency_s=182.33982133702375
-  - name: fixed_window_16_b8
-    run_id: 20260623-230625-fixed-window-16-effective-8-Qwen3-32B-b8
-    status_note: configured window 16 clamped to effective window 8, latency_s=181.9183734988328
-  - name: concur_dynamic_b8
-    run_id: 20260623-222503-concur_dynamic-Qwen3-32B-b8
-    status_note: latency_s=200.29479524795897
-  - name: parse_exact_sglang_metrics
-    status_note: generated SGLang request/scheduler CSVs and exact token usage/queue figures from retained server logs
+- name: smoke_mock_pipeline
+  run_id: 20260623-184136-no_control-mock-pipeline-b2
+  status_note: pipeline validation only, not a Qwen result
+- name: smoke_qwen3_32b_bf16
+  run_id: 20260623-221042-no_control-Qwen3-32B-BF16-b2
+  status_note: real Qwen3-32B BF16 smoke succeeded on single GPU, TP=1
+- name: old_v1_b8_sweep
+  status_note: completed no_control, request caps 1/2/4/8, fixed windows 2/4/8/16-effective-8,
+    and concur_dynamic v1
+- name: parse_exact_sglang_metrics_v1
+  status_note: generated exact SGLang request/scheduler CSVs for old v1 runs
+- name: p2_prefix_v2_b2_smoke
+  phase: P2
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/smoke_qwen3_32b_bf16_prefix_v2_b2.yaml
+  status_note: success; prefix_stable_v2 b2 exact cached ratio 0.5066 overall, later
+    steps about 0.51 and 0.67
+  run_id: 20260629-213536-no-control-Qwen3-32B-BF16-prefix-v2-b2
+  finished_at: '2026-06-29T21:37:53+08:00'
+- name: p5_concur_dynamic_v2_b8_seed0_first
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/concur_dynamic_v2_b8_seed0_prefix_v2.yaml
+  status_note: success; latency 225.036s; 114 exact feedback events; window 1..8;
+    max_token_usage 0.97; max_queue_req 218
+  run_id: 20260629-213848-concur-dynamic-v2-Qwen3-32B-prefix-v2-seed0-b8
+  finished_at: '2026-06-29T21:44:22+08:00'
+- name: p5_no_control_b8_seed0_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/baseline_no_control_b8_seed0_prefix_v2.yaml
+  status_note: success; latency 328.303s; serving 64/64; scheduler max_token_usage
+    0.97; max_queue_req 336; max_pending_token 159879; request metrics file contains
+    extra SGLang records, mapped harness cached ratio about 0.0208
+  started_at: '2026-06-29T22:00:00+08:00'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260629-220152-no-control-Qwen3-32B-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260629-220152-no-control-Qwen3-32B-prefix-v2-seed0-b8
+  finished_at: '2026-06-29T22:13:28+08:00'
+- name: p5_request_cap_4_b8_seed0_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/request_cap_4_b8_seed0_prefix_v2.yaml
+  status_note: success; latency 186.792s; serving 64/64; exact request cached ratio
+    0.1366; scheduler max_token_usage 0.92; max_queue_req 3; max_pending_token 65056
+  started_at: '2026-06-29T22:17:53+08:00'
+  strategy: request_cap
+  workload_version: prefix_stable_v2
+  run_id: 20260629-221825-request-cap-4-Qwen3-32B-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260629-221825-request-cap-4-Qwen3-32B-prefix-v2-seed0-b8
+  finished_at: '2026-06-29T22:23:08+08:00'
+- name: p5_fixed_window_4_b8_seed0_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_4_b8_seed0_prefix_v2.yaml
+  status_note: success; latency 115.472s; serving 64/64; exact request cached ratio
+    0.6795; scheduler max_token_usage 0.96; max_queue_req 1; max_pending_token 20368
+  started_at: '2026-06-29T22:28:05+08:00'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260629-222835-fixed-window-4-Qwen3-32B-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260629-222835-fixed-window-4-Qwen3-32B-prefix-v2-seed0-b8
+  finished_at: '2026-06-29T22:31:38+08:00'
+- name: p5_fixed_window_8_b8_seed0_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_8_b8_seed0_prefix_v2.yaml
+  status_note: success; latency 165.424s; serving 64/64; exact request cached ratio
+    0.1895; scheduler max_token_usage 0.97; max_queue_req 6; max_pending_token 115568
+  started_at: '2026-07-03T12:58:18+08:00'
+  runner_updated_at: '2026-07-03T12:58:18+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-125818-fixed-window-8-Qwen3-32B-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-125818-fixed-window-8-Qwen3-32B-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T13:01:06+08:00'
+- name: p5_no_control_b8_seed1_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/baseline_no_control_b8_seed1_prefix_v2.yaml
+  status_note: success; latency 162.948s; serving 64/64; exact request cached ratio
+    0.2075; scheduler max_token_usage 0.97; max_queue_req 6; max_pending_token 135500
+  started_at: '2026-07-03T13:05:58+08:00'
+  runner_updated_at: '2026-07-03T13:05:58+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-130558-no-control-Qwen3-32B-prefix-v2-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-130558-no-control-Qwen3-32B-prefix-v2-seed1-b8
+  finished_at: '2026-07-03T13:08:46+08:00'
+- name: p5_request_cap_4_b8_seed1_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/request_cap_4_b8_seed1_prefix_v2.yaml
+  status_note: success; latency 181.567s; serving 64/64; exact request cached ratio
+    0.1716; scheduler max_token_usage 0.92; max_queue_req 2; max_pending_token 56928
+  started_at: '2026-07-03T13:15:21+08:00'
+  runner_updated_at: '2026-07-03T13:15:22+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: request_cap
+  workload_version: prefix_stable_v2
+  run_id: 20260703-131522-request-cap-4-Qwen3-32B-prefix-v2-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-131522-request-cap-4-Qwen3-32B-prefix-v2-seed1-b8
+  finished_at: '2026-07-03T13:18:28+08:00'
+- name: p5_fixed_window_4_b8_seed1_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_4_b8_seed1_prefix_v2.yaml
+  status_note: success; latency 120.300s; serving 64/64; exact request cached ratio
+    0.6575; scheduler max_token_usage 0.97; max_queue_req 2; max_pending_token 44177
+  started_at: '2026-07-03T13:25:10+08:00'
+  runner_updated_at: '2026-07-03T13:25:10+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-132510-fixed-window-4-Qwen3-32B-prefix-v2-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-132510-fixed-window-4-Qwen3-32B-prefix-v2-seed1-b8
+  finished_at: '2026-07-03T13:27:16+08:00'
+- name: p5_fixed_window_8_b8_seed1_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_8_b8_seed1_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T13:34:28+08:00'
+  runner_updated_at: '2026-07-03T13:34:28+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-133428-fixed-window-8-Qwen3-32B-prefix-v2-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-133428-fixed-window-8-Qwen3-32B-prefix-v2-seed1-b8
+  finished_at: '2026-07-03T13:37:16+08:00'
+- name: p5_concur_dynamic_v2_b8_seed1_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/concur_dynamic_v2_b8_seed1_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T13:42:55+08:00'
+  runner_updated_at: '2026-07-03T13:42:55+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_dynamic_v2
+  workload_version: prefix_stable_v2
+  run_id: 20260703-134255-concur-dynamic-v2-Qwen3-32B-prefix-v2-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-134255-concur-dynamic-v2-Qwen3-32B-prefix-v2-seed1-b8
+  finished_at: '2026-07-03T13:45:55+08:00'
+- name: p5_no_control_b8_seed2_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/baseline_no_control_b8_seed2_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T13:50:58+08:00'
+  runner_updated_at: '2026-07-03T13:50:58+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-135058-no-control-Qwen3-32B-prefix-v2-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-135058-no-control-Qwen3-32B-prefix-v2-seed2-b8
+  finished_at: '2026-07-03T13:53:46+08:00'
+- name: p5_request_cap_4_b8_seed2_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/request_cap_4_b8_seed2_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T13:58:57+08:00'
+  runner_updated_at: '2026-07-03T13:58:57+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: request_cap
+  workload_version: prefix_stable_v2
+  run_id: 20260703-135857-request-cap-4-Qwen3-32B-prefix-v2-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-135857-request-cap-4-Qwen3-32B-prefix-v2-seed2-b8
+  finished_at: '2026-07-03T14:02:03+08:00'
+- name: p5_fixed_window_4_b8_seed2_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_4_b8_seed2_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T21:50:33+08:00'
+  runner_updated_at: '2026-07-03T21:52:49+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-215249-fixed-window-4-Qwen3-32B-prefix-v2-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-215249-fixed-window-4-Qwen3-32B-prefix-v2-seed2-b8
+  finished_at: '2026-07-03T21:54:49+08:00'
+- name: p5_fixed_window_8_b8_seed2_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/fixed_window_8_b8_seed2_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T21:54:49+08:00'
+  runner_updated_at: '2026-07-03T21:54:49+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-215450-fixed-window-8-Qwen3-32B-prefix-v2-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-215450-fixed-window-8-Qwen3-32B-prefix-v2-seed2-b8
+  finished_at: '2026-07-03T21:57:38+08:00'
+- name: p5_concur_dynamic_v2_b8_seed2_prefix_v2
+  phase: P5
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/concur_dynamic_v2_b8_seed2_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T21:57:38+08:00'
+  runner_updated_at: '2026-07-03T21:57:38+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_dynamic_v2
+  workload_version: prefix_stable_v2
+  run_id: 20260703-215738-concur-dynamic-v2-Qwen3-32B-prefix-v2-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-215738-concur-dynamic-v2-Qwen3-32B-prefix-v2-seed2-b8
+  finished_at: '2026-07-03T22:00:31+08:00'
+- name: p6_b8_long_ctxfit_no_control_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_ctxfit_no_control_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T22:16:53+08:00'
+  runner_updated_at: '2026-07-03T22:16:53+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-221654-no-control-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-221654-no-control-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T22:27:12+08:00'
+- name: p6_b8_long_ctxfit_fixed_window_4_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_ctxfit_fixed_window_4_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T22:27:12+08:00'
+  runner_updated_at: '2026-07-03T22:27:12+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-222712-fixed-window-4-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-222712-fixed-window-4-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T22:36:12+08:00'
+- name: p6_b8_long_ctxfit_fixed_window_8_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_ctxfit_fixed_window_8_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T22:36:12+08:00'
+  runner_updated_at: '2026-07-03T22:36:12+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-223613-fixed-window-8-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-223613-fixed-window-8-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T22:46:31+08:00'
+- name: p6_b8_long_ctxfit_concur_dynamic_v2_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_ctxfit_concur_dynamic_v2_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T22:46:31+08:00'
+  runner_updated_at: '2026-07-03T22:46:31+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_dynamic_v2
+  workload_version: prefix_stable_v2
+  run_id: 20260703-224631-concur-dynamic-v2-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-224631-concur-dynamic-v2-Qwen3-32B-b8-long-ctxfit-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T22:56:49+08:00'
+- name: p6_b12_no_control_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_no_control_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T22:58:08+08:00'
+  runner_updated_at: '2026-07-03T22:58:08+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-225808-no-control-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-225808-no-control-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:02:44+08:00'
+- name: p6_b12_request_cap_4_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_request_cap_4_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:02:44+08:00'
+  runner_updated_at: '2026-07-03T23:02:44+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: request_cap
+  workload_version: prefix_stable_v2
+  run_id: 20260703-230244-request-cap-4-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-230244-request-cap-4-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:07:44+08:00'
+- name: p6_b12_request_cap_8_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_request_cap_8_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:07:44+08:00'
+  runner_updated_at: '2026-07-03T23:07:45+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: request_cap
+  workload_version: prefix_stable_v2
+  run_id: 20260703-230745-request-cap-8-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-230745-request-cap-8-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:12:27+08:00'
+- name: p6_b12_fixed_window_4_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_fixed_window_4_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:12:27+08:00'
+  runner_updated_at: '2026-07-03T23:12:27+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-231227-fixed-window-4-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-231227-fixed-window-4-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:15:27+08:00'
+- name: p6_b12_fixed_window_8_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_fixed_window_8_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:15:27+08:00'
+  runner_updated_at: '2026-07-03T23:15:27+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-231527-fixed-window-8-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-231527-fixed-window-8-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:19:15+08:00'
+- name: p6_b12_concur_dynamic_v2_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b12_concur_dynamic_v2_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:19:15+08:00'
+  runner_updated_at: '2026-07-03T23:19:16+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_dynamic_v2
+  workload_version: prefix_stable_v2
+  run_id: 20260703-231916-concur-dynamic-v2-Qwen3-32B-b12-prefix-v2-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-231916-concur-dynamic-v2-Qwen3-32B-b12-prefix-v2-seed0-b12
+  finished_at: '2026-07-03T23:22:52+08:00'
+- name: p6_b16_no_control_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b16_no_control_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:24:05+08:00'
+  runner_updated_at: '2026-07-03T23:24:06+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-232406-no-control-Qwen3-32B-b16-prefix-v2-seed0-b16
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-232406-no-control-Qwen3-32B-b16-prefix-v2-seed0-b16
+  finished_at: '2026-07-03T23:30:24+08:00'
+- name: p6_b16_fixed_window_8_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b16_fixed_window_8_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:30:24+08:00'
+  runner_updated_at: '2026-07-03T23:30:24+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: fixed_window
+  workload_version: prefix_stable_v2
+  run_id: 20260703-233024-fixed-window-8-Qwen3-32B-b16-prefix-v2-seed0-b16
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-233024-fixed-window-8-Qwen3-32B-b16-prefix-v2-seed0-b16
+  finished_at: '2026-07-03T23:36:18+08:00'
+- name: p6_b16_concur_dynamic_v2_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b16_concur_dynamic_v2_seed0_prefix_v2.yaml
+  status_note: success
+  started_at: '2026-07-03T23:36:18+08:00'
+  runner_updated_at: '2026-07-03T23:36:18+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_dynamic_v2
+  workload_version: prefix_stable_v2
+  run_id: 20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16
+  finished_at: '2026-07-03T23:42:06+08:00'
 failed:
-  - name: smoke_qwen3_32b_bf16_initial
-    run_id: 20260623-220318-no_control-Qwen3-32B-BF16-b2
-    status_note: connection refused before final server lifecycle fix; retained for diagnosis
+- name: smoke_qwen3_32b_bf16_initial
+  run_id: 20260623-220318-no_control-Qwen3-32B-BF16-b2
+  status_note: connection refused before final server lifecycle fix; retained for
+    diagnosis
+- name: p6_b8_long_no_control_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_no_control_seed0_prefix_v2.yaml
+  status_note: exit_code=1; log=/data/3.8T-1/yue/concur_qwen_repro/outputs/reports/queue_failure_1783087975.log
+  started_at: '2026-07-03T22:05:01+08:00'
+  runner_updated_at: '2026-07-03T22:05:01+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: no_control
+  workload_version: prefix_stable_v2
+  run_id: 20260703-220502-no-control-Qwen3-32B-b8-long-prefix-v2-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/runs/20260703-220502-no-control-Qwen3-32B-b8-long-prefix-v2-seed0-b8
+  finished_at: '2026-07-03T22:12:55+08:00'
+skipped:
+- name: p6_b8_long_fixed_window_4_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_fixed_window_4_seed0_prefix_v2.yaml
+  status_note: skipped after original b8-long no_control exceeded context length at
+    43028 > 40960 tokens
+- name: p6_b8_long_fixed_window_8_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_fixed_window_8_seed0_prefix_v2.yaml
+  status_note: skipped after original b8-long no_control exceeded context length at
+    43028 > 40960 tokens
+- name: p6_b8_long_concur_dynamic_v2_seed0_prefix_v2
+  phase: P6
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b8_long_concur_dynamic_v2_seed0_prefix_v2.yaml
+  status_note: skipped after original b8-long no_control exceeded context length at
+    43028 > 40960 tokens

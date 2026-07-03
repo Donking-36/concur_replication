@@ -1,6 +1,7 @@
 # Next Steps
 
-1. Add repeated trials for the most relevant b8 points if GPU time permits: no-control, request-cap 4, fixed-window 4, fixed-window 8, and dynamic CONCUR.
-2. Consider a higher-pressure workload only if GPU availability allows and all runs remain Qwen-only, single-GPU, TP=1.
-3. Add block-level cache allocation or eviction metrics only if SGLang exposes them in a stable endpoint or log format.
-4. Keep mock and failed smoke runs excluded from Qwen performance claims.
+1. Commit and push the completed v2 reproduction artifacts after one final `git status --short` review.
+2. Keep mock, failed smoke, and context-length failure runs excluded from Qwen performance claims except as documented limitations.
+3. If more GPU time is available, repeat P6 b12/b16 pressure runs across seeds 1/2 to reduce single-run variance.
+4. Tune `concur_dynamic_v2` thresholds against exact SGLang metrics, especially `U_high`, `W_max`, and `alpha`, because fixed_window_4 remains the best b8/b12 latency point.
+5. Consider a multi-GPU serving experiment only if hardware is explicitly available; current results are single-GPU scaled reproduction evidence.

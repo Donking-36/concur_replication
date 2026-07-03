@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 import argparse
 import asyncio
+import contextlib
 import json
 import os
 import platform
@@ -16,12 +17,23 @@ from .clients import MockClient, OpenAICompatClient
 from .config import REPRO_ROOT, append_jsonl, assert_under_root, read_config, write_config
 from .controllers import (
     DynamicWindowController,
+    DynamicWindowV2Controller,
     FixedWindowController,
     NoControlController,
     RequestCap,
 )
+from .live_metrics import SGLangLiveMetrics
 from .gpu import GpuSampler
 from .metadata import controller_metadata, safe_slug
+from .state import (
+    append_execution_log,
+    now_iso,
+    read_queue,
+    update_queue_running_fields,
+    update_active_run,
+    update_heartbeat,
+    update_run_lock,
+)
 from .workload import make_agents, make_observation, synthetic_tool_wait
 
 
@@ -62,7 +74,7 @@ def make_client(config: dict[str, Any]):
     raise ValueError(f"unsupported backend: {backend}")
 
 
-def build_controller(config: dict[str, Any], events_path: Path, total_agents: int):
+def build_controller(config: dict[str, Any], events_path: Path, total_agents: int, metrics_reader=None):
     strategy = config["strategy"]
     if strategy == "no_control" or strategy == "request_cap":
         return NoControlController(total_agents=total_agents, events_path=events_path)
@@ -86,6 +98,23 @@ def build_controller(config: dict[str, Any], events_path: Path, total_agents: in
             w_max=int(config.get("W_max", total_agents)),
             update_interval_s=float(config.get("update_interval_s", 1.0)),
         )
+    if strategy == "concur_dynamic_v2":
+        if metrics_reader is None:
+            raise ValueError("concur_dynamic_v2 requires metrics_reader")
+        return DynamicWindowV2Controller(
+            total_agents=total_agents,
+            events_path=events_path,
+            metrics_reader=metrics_reader,
+            alpha=int(config.get("alpha", 2)),
+            beta=float(config.get("beta", 0.5)),
+            u_low=float(config.get("U_low", 0.35)),
+            u_high=float(config.get("U_high", 0.8)),
+            h_thresh=float(config.get("H_thresh", 0.05)),
+            w0=int(config.get("W_0", 4)),
+            w_min=int(config.get("W_min", 1)),
+            w_max=int(config.get("W_max", total_agents)),
+            update_interval_s=float(config.get("update_interval_s", 2.0)),
+        )
     raise ValueError(f"unsupported strategy: {strategy}")
 
 
@@ -103,6 +132,7 @@ async def run_agent(
 ) -> None:
     seed = int(config.get("seed", 0))
     num_steps = int(config["num_steps"])
+    workload_version = str(config.get("workload_version") or "legacy_v1")
     max_new_tokens = int(config["max_new_tokens"])
     obs_tokens = int(config["observation_tokens_per_step"])
     wait_min = int(config.get("tool_wait_min_ms", 100))
@@ -114,7 +144,7 @@ async def run_agent(
     try:
         resident_context_tokens = 0
         for step in range(num_steps):
-            prompt = agent.build_prompt(step)
+            prompt = agent.build_prompt(step, workload_version=workload_version)
             input_tokens_proxy = max(1, (len(prompt) + 3) // 4)
             append_jsonl(
                 agent_events_path,
@@ -125,14 +155,17 @@ async def run_agent(
                     "event": "generation_start",
                     "context_tokens_proxy": input_tokens_proxy,
                     "strategy": config["strategy"],
+                    "workload_version": workload_version,
                 },
             )
             async with request_cap:
+                request_started_ts = time.time()
                 result = await client.generate(
                     prompt,
                     max_new_tokens=max_new_tokens,
                     temperature=temperature,
                 )
+            request_finished_ts = time.time()
             cache_hit_proxy = 1.0 if step > 0 and resident_context_tokens > 0 else 0.0
             recompute_prefill_tokens_proxy = 0 if cache_hit_proxy else result.input_tokens
             kv_usage_proxy = min(1.0, input_tokens_proxy / max(1, kv_budget_tokens))
@@ -150,8 +183,14 @@ async def run_agent(
                     "prefill_tokens": result.input_tokens,
                     "decode_tokens": result.output_tokens,
                     "generation_latency_s": result.latency_s,
+                    "request_started_ts": request_started_ts,
+                    "request_finished_ts": request_finished_ts,
+                    "request_latency_s": request_finished_ts - request_started_ts,
                     "recompute_prefill_tokens_proxy": recompute_prefill_tokens_proxy,
                     "backend": config.get("backend", "openai"),
+                    "agent_id": agent.agent_id,
+                    "step": step,
+                    "workload_version": workload_version,
                 },
             )
             append_jsonl(
@@ -165,6 +204,7 @@ async def run_agent(
                     "output_tokens": result.output_tokens,
                     "generation_latency_s": result.latency_s,
                     "strategy": config["strategy"],
+                    "workload_version": workload_version,
                 },
             )
             wait_s = await synthetic_tool_wait(
@@ -175,7 +215,6 @@ async def run_agent(
                 seed,
             )
             observation = make_observation(agent.agent_id, step, obs_tokens, seed)
-            agent.observations.append(observation)
             resident_context_tokens = input_tokens_proxy + result.output_tokens + obs_tokens
             context_rows.append(
                 {
@@ -184,6 +223,7 @@ async def run_agent(
                     "context_tokens_proxy": input_tokens_proxy,
                     "observation_tokens_proxy": obs_tokens,
                     "tool_wait_s": wait_s,
+                    "workload_version": workload_version,
                 }
             )
             append_jsonl(
@@ -197,8 +237,10 @@ async def run_agent(
                     "observation_tokens_proxy": obs_tokens,
                     "context_tokens_after_append_proxy": resident_context_tokens,
                     "strategy": config["strategy"],
+                    "workload_version": workload_version,
                 },
             )
+            agent.record_step_result(step, prompt, result.text, observation, workload_version=workload_version)
     finally:
         agent.finished_at = time.time()
         agent_latencies.append(agent.finished_at - agent.started_at)
@@ -212,6 +254,7 @@ def write_context_growth(path: Path, rows: list[dict[str, Any]]) -> None:
         "context_tokens_proxy",
         "observation_tokens_proxy",
         "tool_wait_s",
+        "workload_version",
     ]
     with path.open("w", encoding="utf-8") as fh:
         fh.write(",".join(columns) + "\n")
@@ -222,32 +265,75 @@ def write_context_growth(path: Path, rows: list[dict[str, Any]]) -> None:
 async def run_async(config: dict[str, Any], run_dir: Path) -> dict[str, Any]:
     client = make_client(config)
     num_agents = int(config["num_agents"])
-    agents = make_agents(num_agents, int(config.get("seed", 0)))
+    workload_version = str(config.get("workload_version") or "legacy_v1")
+    agents = make_agents(num_agents, int(config.get("seed", 0)), workload_version=workload_version)
     agent_events_path = run_dir / "agent_events.jsonl"
     controller_events_path = run_dir / "controller_events.jsonl"
     serving_metrics_path = run_dir / "serving_metrics.jsonl"
-    controller = build_controller(config, controller_events_path, num_agents)
+    run_start_ts = time.time()
+    metrics_reader = None
+    if config["strategy"] == "concur_dynamic_v2":
+        from .live_metrics import latest_server_run_dir
+
+        server_run_dir = latest_server_run_dir()
+        metrics_reader = SGLangLiveMetrics(server_run_dir=server_run_dir, run_start_ts=run_start_ts).read
+    controller = build_controller(config, controller_events_path, num_agents, metrics_reader=metrics_reader)
     request_cap_value = int(config.get("request_cap", 0)) if config["strategy"] == "request_cap" else 0
     request_cap = RequestCap(request_cap_value)
     context_rows: list[dict[str, Any]] = []
     agent_latencies: list[float] = []
     start = time.perf_counter()
-    await asyncio.gather(
-        *[
-            run_agent(
-                agent,
-                config=config,
-                client=client,
-                controller=controller,
-                request_cap=request_cap,
-                agent_events_path=agent_events_path,
-                serving_metrics_path=serving_metrics_path,
-                context_rows=context_rows,
-                agent_latencies=agent_latencies,
+    monitor_stop = asyncio.Event()
+
+    async def heartbeat_loop() -> None:
+        last_summary = time.time()
+        while not monitor_stop.is_set():
+            update_heartbeat(
+                active=True,
+                phase=str(config.get("phase", config["strategy"])),
+                message=f"run={run_dir.name} 正在运行，策略={config['strategy']}，workload={workload_version}",
+                run_id=run_dir.name,
             )
-            for agent in agents
-        ]
-    )
+            now = time.time()
+            if now - last_summary >= 1800:
+                append_execution_log(
+                    f"阶段小结：run {run_dir.name} 仍在执行，策略={config['strategy']}，workload={workload_version}，已运行 {now - run_start_ts:.0f}s。",
+                    phase=str(config.get("phase", config["strategy"])),
+                    run_id=run_dir.name,
+                )
+                last_summary = now
+            try:
+                await asyncio.wait_for(monitor_stop.wait(), timeout=300)
+            except asyncio.TimeoutError:
+                continue
+
+    heartbeat_task = asyncio.create_task(heartbeat_loop())
+    if hasattr(controller, "start"):
+        await controller.start()
+    try:
+        await asyncio.gather(
+            *[
+                run_agent(
+                    agent,
+                    config=config,
+                    client=client,
+                    controller=controller,
+                    request_cap=request_cap,
+                    agent_events_path=agent_events_path,
+                    serving_metrics_path=serving_metrics_path,
+                    context_rows=context_rows,
+                    agent_latencies=agent_latencies,
+                )
+                for agent in agents
+            ]
+        )
+    finally:
+        monitor_stop.set()
+        heartbeat_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await heartbeat_task
+        if hasattr(controller, "stop"):
+            await controller.stop()
     batch_latency = time.perf_counter() - start
     write_context_growth(run_dir / "context_growth.csv", context_rows)
     completed = len(agent_latencies)
@@ -260,6 +346,7 @@ async def run_async(config: dict[str, Any], run_dir: Path) -> dict[str, Any]:
         "model_label": config.get("model_label"),
         "served_model_name": config.get("served_model_name"),
         "strategy": config["strategy"],
+        "workload_version": workload_version,
         **metadata,
         "num_agents": num_agents,
         "num_steps": int(config["num_steps"]),
@@ -298,6 +385,38 @@ def main() -> int:
     config_path = assert_under_root(Path(args.config))
     config = read_config(config_path)
     run_dir = prepare_run(config, config_path)
+    run_id_value = run_dir.name
+    append_execution_log(
+        f"开始实验 run={run_id_value} config={config_path} strategy={config.get('strategy')} workload={config.get('workload_version', 'legacy_v1')}",
+        phase=str(config.get("phase", config.get("strategy", "run"))),
+        run_id=run_id_value,
+    )
+    update_run_lock(locked=True, phase=str(config.get("phase", config.get("strategy", "run"))), reason="experiment_running", run_id=run_id_value)
+    update_active_run(
+        active=True,
+        phase=str(config.get("phase", config.get("strategy", "run"))),
+        run_id=run_id_value,
+        run_dir=str(run_dir),
+        config_path=str(config_path),
+        started_at=now_iso(),
+    )
+    update_heartbeat(
+        active=True,
+        phase=str(config.get("phase", config.get("strategy", "run"))),
+        message=f"实验 {run_id_value} 已启动，等待完成。",
+        run_id=run_id_value,
+    )
+    running_update = {
+        "config_path": str(config_path),
+        "strategy": config.get("strategy"),
+        "workload_version": config.get("workload_version", "legacy_v1"),
+        "run_id": run_id_value,
+        "run_dir": str(run_dir),
+        "status_note": "running by run_experiment",
+    }
+    queue = read_queue()
+    if queue.get("running") is not None:
+        update_queue_running_fields(running_update)
     shell_capture(["nvidia-smi"], run_dir / "nvidia_smi_start.txt")
     shell_capture(["nvidia-smi", "pmon", "-c", "1"], run_dir / "nvidia_smi_pmon_start.txt")
     sampler = GpuSampler(
@@ -311,6 +430,11 @@ def main() -> int:
             (run_dir / "gpu_metrics.csv").write_text(f"gpu_sampler_failed,{type(exc).__name__},{exc}\n", encoding="utf-8")
     try:
         summary = asyncio.run(run_async(config, run_dir))
+        append_execution_log(
+            f"实验结束 run={run_id_value} latency_s={summary.get('end_to_end_batch_latency_s')} status=success",
+            phase=str(config.get("phase", config.get("strategy", "run"))),
+            run_id=run_id_value,
+        )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0
     except Exception as exc:
@@ -341,11 +465,30 @@ def main() -> int:
             encoding="utf-8",
         )
         (run_dir / "summary.json").write_text(json.dumps(failure, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        append_execution_log(
+            f"实验失败 run={run_id_value} type={type(exc).__name__} message={exc}",
+            phase=str(config.get("phase", config.get("strategy", "run"))),
+            run_id=run_id_value,
+        )
         print(json.dumps(failure, indent=2, sort_keys=True), file=sys.stderr)
         return 1
     finally:
         sampler.stop()
         shell_capture(["nvidia-smi"], run_dir / "nvidia_smi_end.txt")
+        update_heartbeat(
+            active=False,
+            phase=str(config.get("phase", config.get("strategy", "run"))),
+            message=f"实验 {run_id_value} 已结束。",
+            run_id=run_id_value,
+        )
+        update_active_run(
+            active=False,
+            phase=str(config.get("phase", config.get("strategy", "run"))),
+            run_id=run_id_value,
+            run_dir=str(run_dir),
+            config_path=str(config_path),
+        )
+        update_run_lock(locked=False, phase=str(config.get("phase", config.get("strategy", "run"))), reason="experiment_finished", run_id=run_id_value)
 
 
 if __name__ == "__main__":

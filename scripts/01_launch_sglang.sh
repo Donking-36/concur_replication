@@ -78,7 +78,7 @@ if [[ ! -s "$PID_FILE" ]]; then
 fi
 
 SERVER_PID="$(cat "$PID_FILE")"
-echo "$RUN_DIR" > "$CONCUR_REPRO_ROOT/outputs/reports/latest_sglang_server_run_dir.txt"
+echo "$RUN_DIR" > "$CONCUR_REPRO_ROOT/outputs/reports/latest_sglang_server_attempt_run_dir.txt"
 
 set +e
 "$CONCUR_ROOT/envs/sglang/bin/python" - "$PORT" "$RUN_DIR/health_check.json" "$READY_TIMEOUT_S" "$SERVER_PID" <<'PY'
@@ -145,6 +145,7 @@ if [[ "$HEALTH_STATUS" != "0" ]]; then
   exit "$HEALTH_STATUS"
 fi
 
+echo "$RUN_DIR" > "$CONCUR_REPRO_ROOT/outputs/reports/latest_sglang_server_run_dir.txt"
 echo "server_run_dir=$RUN_DIR"
 echo "server_pid=$SERVER_PID"
 echo "base_url=http://127.0.0.1:$PORT"

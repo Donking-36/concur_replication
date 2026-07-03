@@ -75,3 +75,41 @@ Current phase: P0 environment boundary and P1 engineering pipeline scaffolding.
   `outputs/reports/metrics_definition.md`, and
   `outputs/reports/proxy_metric_explanation.md` to distinguish exact SGLang log signals from remaining block-level cache internals.
 - Added report findings for the task success criteria. The single b8 run shows baseline and aggressive-window pressure (`max_token_usage=0.97`, queue depth `6`), request-cap instability, conservative/aggressive fixed-window behavior, and a mixed CONCUR outcome: dynamic reduced max token pressure to `0.93` but did not beat no-control latency in this single-run setting.
+
+## 2026-06-26 P0-P2 recovery and v2 preparation
+
+- Added `heartbeat.json`, `run_lock.json`, and `active_run.json` for unattended recovery state.
+- Added `outputs/reports/codex_execution_log.md` and started appending Chinese execution logs for each phase and failure.
+- Added `outputs/reports/current_results_audit.md` to document v1 results, credibility gaps, and v2 acceptance criteria.
+- Added `prefix_stable_v2` workload support so later prompts preserve the previous prompt as a stable prefix.
+- Added `concur_dynamic_v2` with background periodic exact SGLang log feedback.
+- Added `src/concur_repro/live_metrics.py`, `src/concur_repro/state.py`, `src/concur_repro/queue_runner.py`, and `scripts/08_run_queue.sh` for exact metric polling, atomic queue updates, heartbeat, run lock, active run, GPU wait, and watchdog support.
+- Added v2 configs for b2 smoke, b8 seeds 0/1/2, and optional b8-long/b12/b16 pressure extensions.
+- Rebuilt analysis tables with `workload_version` and request-to-agent/step mapping columns.
+- Attempted a fresh SGLang TP=1 server launch on GPU0 for P2 smoke. It failed with CUDA OOM because GPU0 was already occupied by another user's `sglang::scheduler`; no external process was killed.
+
+## 2026-06-29 P0-P2 recovery retry
+
+- Re-audited the worktree, queue, long-lived state files, and GPU state after the user reported that GPUs were idle.
+- Mirrored `heartbeat.json`, `run_lock.json`, and `active_run.json` into `outputs/reports/` while preserving the existing repository-root copies for compatibility.
+- Recovered `p2_prefix_v2_b2_smoke` back to the front of `experiment_queue.yaml` after an interrupted wait; no 20260629 experiment run directory was created and the queue item was not marked failed.
+- Hardened `scripts/08_run_queue.sh` and `src/concur_repro/queue_runner.py` so GPU admission now requires both `memory.used <= 2000 MiB` and `utilization.gpu <= 5%`, with two consecutive idle confirmations by default.
+- Verified offline that `prefix_stable_v2` preserves the previous request as a byte-prefix for the next step, and that `SGLangLiveMetrics` can parse retained SGLang request/scheduler metrics.
+- Current blocker remains shared GPU availability: at 2026-06-29 21:18 Asia/Shanghai, all four GPUs were occupied by user `zhy`'s `sglang::scheduler` processes. No external process was killed.
+
+## 2026-07-03 P5-P8 v2 completion
+
+- Cleared a stale repository-owned SGLang process from GPU0 after confirming its user, command line, model path, and run directory. Other users' GPU processes were left untouched.
+- Completed the `prefix_stable_v2` b8 repeated-trial matrix for three seeds: `no_control`, `request_cap_4`, `fixed_window_4`, `fixed_window_8`, and `concur_dynamic_v2`.
+- Completed P6 pressure extensions: b8-long context-fit, b12 medium, and b16 medium. The original b8-long attempt failed with SGLang HTTP 400 because a 43028-token input exceeded the 40960-token context limit; it was recorded and replaced by the ctxfit version.
+- Regenerated exact SGLang request and scheduler tables, plus v2-specific tables:
+  `outputs/tables/v2_b8_repeated_trials.csv`,
+  `outputs/tables/v2_b8_repeated_trials_summary.csv`,
+  `outputs/tables/v2_pressure_runs.csv`, and
+  `outputs/tables/v2_pressure_runs_summary.csv`.
+- Replaced the v2 presentation layer with matplotlib figures:
+  `v2_latency_mean_std.png`, `v2_scheduler_token_usage_by_controller.png`,
+  `v2_queue_depth_by_controller.png`, `v2_cached_token_ratio_by_controller.png`,
+  `v2_dynamic_window_timeseries.png`, and `v2_fixed_vs_dynamic_latency.png`.
+- Generated `outputs/reports/qwen_single_gpu_report_v2.md` and `outputs/reports/v2_b8_repeated_trials.md`.
+- Main result: `prefix_stable_v2` raises exact b8 cached-token ratio mean from about `0.0019` in old v1 to about `0.2731`; `concur_dynamic_v2` produces periodic exact-feedback controller events, but does not consistently beat fixed-window latency. It is best among the tested b16 controllers and beats no-control on b12/b16.

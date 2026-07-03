@@ -9,3 +9,7 @@ envs/
 venv/
 outputs/runs/**/env.txt
 outputs/runs/**/*.pid
+outputs/runs/
+outputs/reports/queue_failure_*.log
+outputs/reports/sglang_launch_*.log
+outputs/reports/latest_sglang_server_attempt_run_dir.txt

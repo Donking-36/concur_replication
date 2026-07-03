@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable, Any
 import asyncio
 import math
 import time
 
 from .config import append_jsonl
+from .live_metrics import LiveMetricSnapshot
 
 
 @dataclass
@@ -35,6 +37,12 @@ class BaseController:
     def release_agent(self) -> None:
         self.active_agents -= 1
         self.finished_agents += 1
+
+    async def start(self) -> None:
+        return None
+
+    async def stop(self) -> None:
+        return None
 
     def record(self, snapshot: ControllerSnapshot) -> None:
         append_jsonl(
@@ -189,6 +197,156 @@ class DynamicWindowController(BaseController):
         asyncio.create_task(notify())
 
 
+class DynamicWindowV2Controller(BaseController):
+    def __init__(
+        self,
+        total_agents: int,
+        events_path: Path,
+        metrics_reader: Callable[[], LiveMetricSnapshot],
+        alpha: int = 2,
+        beta: float = 0.5,
+        u_low: float = 0.35,
+        u_high: float = 0.80,
+        h_thresh: float = 0.05,
+        w0: int = 4,
+        w_min: int = 1,
+        w_max: int | None = None,
+        update_interval_s: float = 2.0,
+    ) -> None:
+        super().__init__(total_agents, events_path)
+        self.alpha = alpha
+        self.beta = beta
+        self.u_low = u_low
+        self.u_high = u_high
+        self.h_thresh = h_thresh
+        self.w_min = w_min
+        self.w_max = min(w_max or total_agents, total_agents)
+        self.window = max(self.w_min, min(w0, self.w_max))
+        self.update_interval_s = update_interval_s
+        self.metrics_reader = metrics_reader
+        self._cond = asyncio.Condition()
+        self._stop_event = asyncio.Event()
+        self._task: asyncio.Task | None = None
+        self._last_snapshot: LiveMetricSnapshot | None = None
+
+    async def start(self) -> None:
+        self._task = asyncio.create_task(self._feedback_loop())
+
+    async def stop(self) -> None:
+        self._stop_event.set()
+        if self._task is not None:
+            await self._task
+
+    async def acquire_agent(self) -> None:
+        async with self._cond:
+            while self.active_agents >= self.window:
+                await self._cond.wait()
+            self.active_agents += 1
+            pending = max(0, self.total_agents - self.active_agents - self.finished_agents)
+            self._record_event(
+                action="admit",
+                reason="agent_admitted_under_current_window",
+                window=self.window,
+                next_window=self.window,
+                pending_agents=pending,
+                metric_type="exact_or_pending",
+                extra={},
+            )
+
+    def release_agent(self) -> None:
+        self.active_agents -= 1
+        self.finished_agents += 1
+
+        async def notify() -> None:
+            async with self._cond:
+                self._cond.notify_all()
+
+        asyncio.create_task(notify())
+
+    async def _feedback_loop(self) -> None:
+        while not self._stop_event.is_set():
+            await self._sample_and_update()
+            try:
+                await asyncio.wait_for(self._stop_event.wait(), timeout=self.update_interval_s)
+            except asyncio.TimeoutError:
+                continue
+        await self._sample_and_update(final=True)
+
+    async def _sample_and_update(self, final: bool = False) -> None:
+        snapshot = await asyncio.to_thread(self.metrics_reader)
+        self._last_snapshot = snapshot
+        token_usage = snapshot.token_usage
+        cached_ratio = snapshot.recent_cached_token_ratio
+        if cached_ratio is None:
+            cached_ratio = snapshot.cached_token_ratio
+        old_window = self.window
+        next_window = old_window
+        action = "hold"
+        reason = "missing_exact_scheduler_metric"
+        if token_usage is not None:
+            if token_usage > self.u_high and (cached_ratio is None or cached_ratio < self.h_thresh):
+                next_window = math.floor(self.beta * old_window)
+                action = "decrease"
+                reason = "exact_token_usage_high_and_cached_ratio_low"
+            elif token_usage < self.u_low:
+                next_window = old_window + self.alpha
+                action = "increase"
+                reason = "exact_token_usage_low"
+            else:
+                reason = "exact_metrics_within_band"
+        next_window = max(self.w_min, min(next_window, self.w_max))
+        self.window = next_window
+        async with self._cond:
+            self._cond.notify_all()
+        pending = max(0, self.total_agents - self.active_agents - self.finished_agents)
+        self._record_event(
+            action="final_sample" if final else action,
+            reason=f"{reason}{'_final' if final else ''}",
+            window=old_window,
+            next_window=next_window,
+            pending_agents=pending,
+            metric_type="exact_sglang_log",
+            extra={
+                "scheduler_points": snapshot.scheduler_points,
+                "request_count": snapshot.request_count,
+                "token_usage": snapshot.token_usage,
+                "running_req": snapshot.running_req,
+                "queue_req": snapshot.queue_req,
+                "pending_token": snapshot.pending_token,
+                "cached_token_ratio": snapshot.cached_token_ratio,
+                "recent_cached_token_ratio": snapshot.recent_cached_token_ratio,
+                "metrics_source": snapshot.source,
+            },
+        )
+
+    def _record_event(
+        self,
+        *,
+        action: str,
+        reason: str,
+        window: int,
+        next_window: int,
+        pending_agents: int,
+        metric_type: str,
+        extra: dict[str, Any],
+    ) -> None:
+        row = {
+            "timestamp": time.time(),
+            "W_t": window,
+            "W_next": next_window,
+            "U_t": extra.get("token_usage"),
+            "H_t": extra.get("recent_cached_token_ratio", extra.get("cached_token_ratio")),
+            "active_agents": self.active_agents,
+            "pending_agents": pending_agents,
+            "finished_agents": self.finished_agents,
+            "action": action,
+            "reason": reason,
+            "metric_type": metric_type,
+        }
+        row.update(extra)
+        append_jsonl(self.events_path, row)
+
+
 class RequestCap:
     def __init__(self, cap: int | None) -> None:
         self.sem = asyncio.Semaphore(cap) if cap and cap > 0 else None
@@ -200,4 +358,3 @@ class RequestCap:
     async def __aexit__(self, exc_type, exc, tb) -> None:
         if self.sem is not None:
             self.sem.release()
-
