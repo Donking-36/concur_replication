@@ -435,3 +435,10 @@
 - 2026-07-03T23:36:18+08:00 阶段=P6 run=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16：开始实验 run=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16 config=/data/3.8T-1/yue/concur_qwen_repro/configs/experiments/b16_concur_dynamic_v2_seed0_prefix_v2.yaml strategy=concur_dynamic_v2 workload=prefix_stable_v2
 - 2026-07-03T23:42:00+08:00 阶段=P6 run=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16：实验结束 run=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16 latency_s=341.3661269340082 status=success
 - 2026-07-03T23:42:06+08:00 阶段=P6 run=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16：队列项完成：p6_b16_concur_dynamic_v2_seed0_prefix_v2 run_id=20260703-233618-concur-dynamic-v2-Qwen3-32B-b16-prefix-v2-seed0-b16
+
+## 2026-07-04 02:08:34 Asia/Shanghai - innovation feature branch setup
+
+- 当前分支：feature/qwen-innovation；不合并到 main。
+- GPU 检查：GPU0/1/2 只有 Xorg 轻量占用；GPU3 的唯一计算进程 PID 1320119 属于 howarli，命令为保留 GPU 提示，未触碰。
+- 已分离创新结果路径：raw runs 写入 outputs/innovation/runs，汇总表/图/报告写入 outputs/innovation/{tables,figures,reports}。
+- 已准备首轮创新队列：cache-aware hysteresis 与 phase-window 两个 controller，各跑 b8 seed0/1/2；b8-long、b12、b16 作为 planned 扩展项等待首轮分析。

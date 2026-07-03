@@ -29,6 +29,10 @@ mkdir -p \
   "$CONDA_PKGS_DIRS" \
   "$PYTHONPYCACHEPREFIX" \
   "$CONCUR_REPRO_ROOT/outputs/runs" \
+  "$CONCUR_REPRO_ROOT/outputs/innovation/runs" \
+  "$CONCUR_REPRO_ROOT/outputs/innovation/reports" \
+  "$CONCUR_REPRO_ROOT/outputs/innovation/figures" \
+  "$CONCUR_REPRO_ROOT/outputs/innovation/tables" \
   "$CONCUR_REPRO_ROOT/outputs/reports" \
   "$CONCUR_REPRO_ROOT/outputs/figures" \
   "$CONCUR_REPRO_ROOT/outputs/tables"

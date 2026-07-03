@@ -425,9 +425,10 @@ def write_sglang_log_artifacts(
     runs_dir: Path,
     tables_dir: Path,
     summaries: list[dict[str, Any]],
+    server_runs_dir: Path | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     windows = collect_run_windows(summaries)
-    server_dirs = collect_server_dirs(runs_dir)
+    server_dirs = collect_server_dirs(server_runs_dir or runs_dir)
     request_rows = parse_request_metric_rows(server_dirs, windows)
     request_summaries = summarize_request_rows(request_rows)
     scheduler_rows = parse_scheduler_rows(server_dirs, windows)

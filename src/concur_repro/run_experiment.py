@@ -16,10 +16,12 @@ import time
 from .clients import MockClient, OpenAICompatClient
 from .config import REPRO_ROOT, append_jsonl, assert_under_root, read_config, write_config
 from .controllers import (
+    CacheAwareHysteresisController,
     DynamicWindowController,
     DynamicWindowV2Controller,
     FixedWindowController,
     NoControlController,
+    PhaseWindowController,
     RequestCap,
 )
 from .live_metrics import SGLangLiveMetrics
@@ -115,6 +117,36 @@ def build_controller(config: dict[str, Any], events_path: Path, total_agents: in
             w_max=int(config.get("W_max", total_agents)),
             update_interval_s=float(config.get("update_interval_s", 2.0)),
         )
+    if strategy == "concur_cache_aware_v1":
+        if metrics_reader is None:
+            raise ValueError("concur_cache_aware_v1 requires metrics_reader")
+        return CacheAwareHysteresisController(
+            total_agents=total_agents,
+            events_path=events_path,
+            metrics_reader=metrics_reader,
+            cache_low=float(config.get("cache_low", 0.12)),
+            cache_high=float(config.get("cache_high", 0.35)),
+            ewma_alpha=float(config.get("cache_ewma_alpha", 0.35)),
+            u_low=float(config.get("U_low", 0.55)),
+            u_high=float(config.get("U_high", 0.92)),
+            queue_high=int(config.get("queue_high", 4)),
+            pending_high=int(config.get("pending_high", 120000)),
+            cooldown_ticks=int(config.get("cooldown_ticks", 2)),
+            w0=int(config.get("W_0", 4)),
+            w_min=int(config.get("W_min", 1)),
+            w_max=int(config.get("W_max", total_agents)),
+            update_interval_s=float(config.get("update_interval_s", 2.0)),
+        )
+    if strategy == "phase_window_v1":
+        return PhaseWindowController(
+            total_agents=total_agents,
+            events_path=events_path,
+            warmup_steps=int(config.get("warmup_steps", 2)),
+            w_warmup=int(config.get("W_warmup", 4)),
+            w_mid=int(config.get("W_mid", 6)),
+            w_after=int(config.get("W_after", 8)),
+            ramp=bool(config.get("phase_ramp", True)),
+        )
     raise ValueError(f"unsupported strategy: {strategy}")
 
 
@@ -207,6 +239,7 @@ async def run_agent(
                     "workload_version": workload_version,
                 },
             )
+            controller.record_step_progress(agent.agent_id, step + 1)
             wait_s = await synthetic_tool_wait(
                 agent.agent_id,
                 step,
@@ -272,7 +305,7 @@ async def run_async(config: dict[str, Any], run_dir: Path) -> dict[str, Any]:
     serving_metrics_path = run_dir / "serving_metrics.jsonl"
     run_start_ts = time.time()
     metrics_reader = None
-    if config["strategy"] == "concur_dynamic_v2":
+    if config["strategy"] in {"concur_dynamic_v2", "concur_cache_aware_v1"}:
         from .live_metrics import latest_server_run_dir
 
         server_run_dir = latest_server_run_dir()
@@ -365,7 +398,11 @@ async def run_async(config: dict[str, Any], run_dir: Path) -> dict[str, Any]:
 def prepare_run(config: dict[str, Any], config_path: Path) -> Path:
     label = config.get("model_label") or str(config.get("model", "model")).split("/")[-1]
     metadata = controller_metadata(config, int(config["num_agents"]))
-    out = REPRO_ROOT / "outputs" / "runs" / run_id(metadata["controller_label"], label, int(config["num_agents"]))
+    output_root_value = config.get("output_root", "outputs/runs")
+    output_root = Path(str(output_root_value))
+    if not output_root.is_absolute():
+        output_root = REPRO_ROOT / output_root
+    out = output_root / run_id(metadata["controller_label"], label, int(config["num_agents"]))
     out = assert_under_root(out)
     out.mkdir(parents=True, exist_ok=False)
     write_config(out / "config.yaml", config)

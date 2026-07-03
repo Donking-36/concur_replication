@@ -1,0 +1,63 @@
+schema_version: 2
+updated_at: '2026-07-04T02:08:34+08:00'
+policy:
+  root: /data/3.8T-1/yue
+  single_gpu_only: true
+  sglang_tensor_parallel_size: 1
+  no_sudo: true
+  no_external_write_roots: true
+  atomic_updates: true
+  output_root: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation
+pending:
+- name: innovation_cache_aware_v1_b8_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed0_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+- name: innovation_phase_window_v1_b8_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed0_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+- name: innovation_cache_aware_v1_b8_seed1_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed1_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+- name: innovation_phase_window_v1_b8_seed1_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed1_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+- name: innovation_cache_aware_v1_b8_seed2_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed2_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+- name: innovation_phase_window_v1_b8_seed2_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed2_prefix_v2.yaml
+  status_note: queued first-pass b8 repeated trial
+running: null
+done: []
+failed: []
+planned:
+- name: innovation_cache_aware_v1_b8_long_ctxfit_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_long_ctxfit_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed
+- name: innovation_phase_window_v1_b8_long_ctxfit_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_long_ctxfit_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed
+- name: innovation_cache_aware_v1_b12_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b12_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed
+- name: innovation_phase_window_v1_b12_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b12_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed
+- name: innovation_cache_aware_v1_b16_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b16_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed
+- name: innovation_phase_window_v1_b16_seed0_prefix_v2
+  phase: INNOVATION
+  config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b16_seed0_prefix_v2.yaml
+  status_note: deferred until b8 repeated trials are analyzed

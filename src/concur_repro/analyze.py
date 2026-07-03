@@ -24,7 +24,10 @@ V2_CONTROLLERS = [
     "fixed_window_4",
     "fixed_window_8",
     "concur_dynamic_v2",
+    "concur_cache_aware_v1",
+    "phase_window_v1",
 ]
+INNOVATION_CONTROLLERS = {"concur_cache_aware_v1", "phase_window_v1"}
 FIGURE_COLORS = {
     "no_control": "#4C78A8",
     "request_cap_4": "#F58518",
@@ -32,6 +35,8 @@ FIGURE_COLORS = {
     "fixed_window_4": "#54A24B",
     "fixed_window_8": "#B279A2",
     "concur_dynamic_v2": "#E45756",
+    "concur_cache_aware_v1": "#9467BD",
+    "phase_window_v1": "#8C564B",
 }
 
 
@@ -967,6 +972,237 @@ def write_v2_report(
     out.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _read_csv_dicts(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8", newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+def write_innovation_artifacts(v2_rows: list[dict], tables_dir: Path, figures_dir: Path, reports_dir: Path) -> None:
+    innovation_rows = [
+        row
+        for row in v2_rows
+        if row.get("controller") in INNOVATION_CONTROLLERS
+    ]
+    if not innovation_rows:
+        return
+    run_fields = [
+        "scenario",
+        "controller",
+        "seed",
+        "status",
+        "run_id",
+        "num_agents",
+        "num_steps",
+        "observation_tokens_per_step",
+        "latency_s",
+        "max_token_usage",
+        "mean_token_usage",
+        "max_queue_req",
+        "max_pending_token",
+        "cached_token_ratio_total",
+        "mean_request_latency_s",
+        "p95_request_latency_s",
+        "controller_event_count",
+        "exact_controller_event_count",
+        "window_min",
+        "window_max",
+        "window_mean",
+        "run_dir",
+    ]
+    _write_rows(tables_dir / "innovation_controller_runs.csv", run_fields, innovation_rows)
+
+    grouped: dict[tuple[str, str], list[dict]] = {}
+    for row in innovation_rows:
+        grouped.setdefault((str(row.get("scenario")), str(row.get("controller"))), []).append(row)
+    summary_rows = []
+    for (scenario, controller), rows in sorted(grouped.items()):
+        success_rows = [row for row in rows if row.get("status") == "success"]
+        latencies = [float(row["latency_s"]) for row in success_rows if row.get("latency_s") is not None]
+        queue_reqs = [float(row["max_queue_req"]) for row in success_rows if row.get("max_queue_req") is not None]
+        pending_tokens = [float(row["max_pending_token"]) for row in success_rows if row.get("max_pending_token") is not None]
+        cache_ratios = [float(row["cached_token_ratio_total"]) for row in success_rows if row.get("cached_token_ratio_total") is not None]
+        event_counts = [float(row["controller_event_count"]) for row in success_rows if row.get("controller_event_count") is not None]
+        summary_rows.append(
+            {
+                "scenario": scenario,
+                "controller": controller,
+                "n": len(success_rows),
+                "latency_mean_s": _mean(latencies),
+                "latency_std_s": _std(latencies),
+                "latency_min_s": min(latencies) if latencies else None,
+                "latency_max_s": max(latencies) if latencies else None,
+                "max_queue_req_mean": _mean(queue_reqs),
+                "max_pending_token_mean": _mean(pending_tokens),
+                "cached_token_ratio_mean": _mean(cache_ratios),
+                "controller_event_count_mean": _mean(event_counts),
+            }
+        )
+    _write_rows(
+        tables_dir / "innovation_controller_summary.csv",
+        [
+            "scenario",
+            "controller",
+            "n",
+            "latency_mean_s",
+            "latency_std_s",
+            "latency_min_s",
+            "latency_max_s",
+            "max_queue_req_mean",
+            "max_pending_token_mean",
+            "cached_token_ratio_mean",
+            "controller_event_count_mean",
+        ],
+        summary_rows,
+    )
+    write_innovation_figures(innovation_rows, summary_rows, figures_dir)
+    write_innovation_report(summary_rows, reports_dir / "qwen_innovation_report.md")
+
+
+def write_innovation_figures(innovation_rows: list[dict], summary_rows: list[dict], figures_dir: Path) -> None:
+    plt = _load_pyplot()
+    figures_dir.mkdir(parents=True, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(8.5, 5.2))
+    for row in innovation_rows:
+        if row.get("status") != "success":
+            continue
+        latency = _float_or_none(row.get("latency_s"))
+        cache_ratio = _float_or_none(row.get("cached_token_ratio_total"))
+        if latency is None or cache_ratio is None:
+            continue
+        controller = str(row["controller"])
+        ax.scatter(cache_ratio, latency, label=controller, color=FIGURE_COLORS.get(controller, "#6B7280"), s=48)
+        ax.annotate(f"{row.get('scenario')} s{row.get('seed')}", (cache_ratio, latency), fontsize=7, xytext=(4, 4), textcoords="offset points")
+    handles, labels = ax.get_legend_handles_labels()
+    unique = dict(zip(labels, handles))
+    if unique:
+        ax.legend(unique.values(), unique.keys(), fontsize=8)
+    ax.set_title("Innovation controllers: latency vs exact cache ratio")
+    ax.set_xlabel("cached_tokens / prompt_tokens")
+    ax.set_ylabel("batch latency, seconds")
+    ax.grid(color="#D9D9D9", linewidth=0.8, alpha=0.8)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "innovation_latency_vs_cache.png", dpi=180)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(9.5, 5.4))
+    rows = [row for row in summary_rows if row.get("scenario") == "b8" and row.get("max_queue_req_mean") is not None]
+    if rows:
+        labels = [str(row["controller"]).replace("_", "\n") for row in rows]
+        values = [float(row["max_queue_req_mean"]) for row in rows]
+        colors = [FIGURE_COLORS.get(str(row["controller"]), "#6B7280") for row in rows]
+        ax.bar(labels, values, color=colors, edgecolor="#2F2F2F", linewidth=0.7)
+    ax.set_title("Innovation b8 queue pressure")
+    ax.set_xlabel("controller")
+    ax.set_ylabel("mean max queue_req")
+    ax.grid(axis="y", color="#D9D9D9", linewidth=0.8, alpha=0.8)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "innovation_queue_pressure.png", dpi=180)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(10.5, 5.8))
+    plotted = 0
+    for row in innovation_rows:
+        if row.get("status") != "success":
+            continue
+        events = list(iter_jsonl(Path(str(row["run_dir"])) / "controller_events.jsonl") or [])
+        if not events:
+            continue
+        base = _float_or_none(events[0].get("timestamp")) or 0.0
+        points = []
+        for event in events:
+            ts = _float_or_none(event.get("timestamp"))
+            window = _float_or_none(event.get("W_next"))
+            if ts is not None and window is not None:
+                points.append((ts - base, window))
+        if not points:
+            continue
+        ax.plot([point[0] for point in points], [point[1] for point in points], linewidth=1.5, label=f"{row.get('controller')} {row.get('scenario')} s{row.get('seed')}")
+        plotted += 1
+    ax.set_title("Innovation controller window timeseries")
+    ax.set_xlabel("elapsed seconds from first controller event")
+    ax.set_ylabel("admission window W")
+    ax.grid(color="#D9D9D9", linewidth=0.8, alpha=0.8)
+    if plotted:
+        ax.legend(loc="best", fontsize=7)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "innovation_window_timeseries.png", dpi=180)
+    plt.close(fig)
+
+
+def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
+    baseline_path = REPRO_ROOT / "outputs" / "tables" / "v2_b8_repeated_trials_summary.csv"
+    baseline_rows = _read_csv_dicts(baseline_path)
+    baseline_table = _markdown_table(
+        baseline_rows,
+        [
+            ("controller", "controller"),
+            ("n", "n"),
+            ("latency_mean_s", "latency_mean_s"),
+            ("latency_std_s", "latency_std_s"),
+            ("max_queue_req_mean", "max_queue_req_mean"),
+            ("cached_token_ratio_mean", "cached_ratio_mean"),
+        ],
+    )
+    innovation_table = _markdown_table(
+        summary_rows,
+        [
+            ("scenario", "scenario"),
+            ("controller", "controller"),
+            ("n", "n"),
+            ("latency_mean_s", "latency_mean_s"),
+            ("latency_std_s", "latency_std_s"),
+            ("max_queue_req_mean", "max_queue_req_mean"),
+            ("cached_token_ratio_mean", "cached_ratio_mean"),
+        ],
+    )
+    lines = [
+        "# Qwen CONCUR Innovation Report",
+        "",
+        "## 1. Goal",
+        "",
+        "Evaluate two lightweight scheduling innovations on top of the completed Qwen3-32B single-GPU v2 reproduction: `concur_cache_aware_v1` and `phase_window_v1`.",
+        "",
+        "## 2. Baseline from v2 Reproduction",
+        "",
+        baseline_table,
+        "",
+        "## 3. Innovation A: Cache-Aware Hysteresis Controller",
+        "",
+        "Uses exact SGLang scheduler/request metrics, an EWMA of cached-token ratio, queue/pending-token guards, and cooldown to reduce queue spikes from the previous dynamic controller.",
+        "",
+        "## 4. Innovation B: Warmup-Then-Open Phase Window",
+        "",
+        "Uses harness progress only: admit a small initial window to build prefix cache, then ramp admission wider after early steps complete.",
+        "",
+        "## 5. Experiment Matrix",
+        "",
+        "Innovation runs are stored separately under `outputs/innovation/runs`; tables, figures, and this report are under `outputs/innovation/`.",
+        "",
+        "## 6. Results",
+        "",
+        innovation_table,
+        "",
+        "## 7. Success Criteria",
+        "",
+        "- `concur_cache_aware_v1`: lower b8 queue pressure than `concur_dynamic_v2` while keeping latency interpretable.",
+        "- `phase_window_v1`: cached ratio above fixed_window_8 and latency below request_cap_4 on b8, if possible.",
+        "",
+        "## 8. Failures and Limitations",
+        "",
+        "This report is generated from currently available innovation runs. If a matrix is incomplete, missing rows mean the run has not been executed yet or failed before producing exact metrics.",
+        "",
+        "## 9. Recommendation",
+        "",
+        "Compare the innovation summary against v2 baselines and keep claims limited to single-GPU Qwen3-32B BF16 evidence.",
+        "",
+    ]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(lines), encoding="utf-8")
+
+
 def timeseries_from_serving(rows: list[dict], field: str) -> list[tuple[float, float]]:
     points = []
     base = None
@@ -983,19 +1219,28 @@ def timeseries_from_serving(rows: list[dict], field: str) -> list[tuple[float, f
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs-dir", default=str(REPRO_ROOT / "outputs" / "runs"))
+    parser.add_argument("--server-runs-dir", default=str(REPRO_ROOT / "outputs" / "runs"))
     parser.add_argument("--tables-dir", default=str(REPRO_ROOT / "outputs" / "tables"))
     parser.add_argument("--figures-dir", default=str(REPRO_ROOT / "outputs" / "figures"))
+    parser.add_argument("--reports-dir", default=str(REPRO_ROOT / "outputs" / "reports"))
     args = parser.parse_args()
     runs_dir = assert_under_root(Path(args.runs_dir))
+    server_runs_dir = assert_under_root(Path(args.server_runs_dir))
     tables_dir = assert_under_root(Path(args.tables_dir))
     figures_dir = assert_under_root(Path(args.figures_dir))
-    reports_dir = assert_under_root(REPRO_ROOT / "outputs" / "reports")
+    reports_dir = assert_under_root(Path(args.reports_dir))
     summaries = collect_summaries(runs_dir)
     write_latency_table(summaries, tables_dir / "end_to_end_latency_table.csv")
-    request_summaries, scheduler_summaries = write_sglang_log_artifacts(runs_dir, tables_dir, summaries)
+    request_summaries, scheduler_summaries = write_sglang_log_artifacts(
+        runs_dir,
+        tables_dir,
+        summaries,
+        server_runs_dir=server_runs_dir,
+    )
     v2_rows = build_v2_result_rows(summaries, request_summaries, scheduler_summaries)
     b8_summary, pressure_summary = write_v2_tables(v2_rows, tables_dir, reports_dir)
     write_v2_figures(v2_rows, b8_summary, figures_dir)
+    write_innovation_artifacts(v2_rows, tables_dir, figures_dir, reports_dir)
     write_v2_report(
         summaries=summaries,
         v2_rows=v2_rows,

@@ -23,7 +23,7 @@ ACTIVE_RUN_PATH = REPORTS_DIR / "active_run.json"
 LEGACY_HEARTBEAT_PATH = REPRO_ROOT / "heartbeat.json"
 LEGACY_RUN_LOCK_PATH = REPRO_ROOT / "run_lock.json"
 LEGACY_ACTIVE_RUN_PATH = REPRO_ROOT / "active_run.json"
-QUEUE_PATH = REPRO_ROOT / "experiment_queue.yaml"
+QUEUE_PATH = assert_under_root(Path(os.environ.get("CONCUR_QUEUE_PATH", str(REPRO_ROOT / "experiment_queue.yaml"))))
 EXECUTION_LOG_PATH = REPRO_ROOT / "outputs" / "reports" / "codex_execution_log.md"
 
 
