@@ -17,12 +17,14 @@ from .clients import MockClient, OpenAICompatClient
 from .config import REPRO_ROOT, append_jsonl, assert_under_root, read_config, write_config
 from .controllers import (
     CacheAwareHysteresisController,
+    CacheGatedGrowthController,
     DynamicWindowController,
     DynamicWindowV2Controller,
     FixedWindowController,
     NoControlController,
     PhaseWindowController,
     RequestCap,
+    TailOpenController,
 )
 from .live_metrics import SGLangLiveMetrics
 from .gpu import GpuSampler
@@ -146,6 +148,35 @@ def build_controller(config: dict[str, Any], events_path: Path, total_agents: in
             w_mid=int(config.get("W_mid", 6)),
             w_after=int(config.get("W_after", 8)),
             ramp=bool(config.get("phase_ramp", True)),
+        )
+    if strategy == "tail_open_v1":
+        return TailOpenController(
+            total_agents=total_agents,
+            events_path=events_path,
+            w_base=int(config.get("W_base", 4)),
+            w_tail=int(config.get("W_tail", 8)),
+            tail_finished_ratio=float(config.get("tail_finished_ratio", 0.5)),
+            tail_progress_steps=int(config.get("tail_progress_steps", 5)),
+        )
+    if strategy == "cache_gate_v1":
+        if metrics_reader is None:
+            raise ValueError("cache_gate_v1 requires metrics_reader")
+        return CacheGatedGrowthController(
+            total_agents=total_agents,
+            events_path=events_path,
+            metrics_reader=metrics_reader,
+            cache_low=float(config.get("cache_low", 0.28)),
+            cache_high=float(config.get("cache_high", 0.55)),
+            ewma_alpha=float(config.get("cache_ewma_alpha", 0.35)),
+            u_high=float(config.get("U_high", 0.94)),
+            queue_high=int(config.get("queue_high", 4)),
+            pending_high=int(config.get("pending_high", 120000)),
+            cooldown_ticks=int(config.get("cooldown_ticks", 1)),
+            w_step=int(config.get("W_step", 1)),
+            w0=int(config.get("W_0", 4)),
+            w_min=int(config.get("W_min", 4)),
+            w_max=int(config.get("W_max", total_agents)),
+            update_interval_s=float(config.get("update_interval_s", 2.0)),
         )
     raise ValueError(f"unsupported strategy: {strategy}")
 
@@ -305,7 +336,7 @@ async def run_async(config: dict[str, Any], run_dir: Path) -> dict[str, Any]:
     serving_metrics_path = run_dir / "serving_metrics.jsonl"
     run_start_ts = time.time()
     metrics_reader = None
-    if config["strategy"] in {"concur_dynamic_v2", "concur_cache_aware_v1"}:
+    if config["strategy"] in {"concur_dynamic_v2", "concur_cache_aware_v1", "cache_gate_v1"}:
         from .live_metrics import latest_server_run_dir
 
         server_run_dir = latest_server_run_dir()

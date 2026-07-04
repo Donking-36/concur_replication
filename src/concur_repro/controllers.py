@@ -531,6 +531,122 @@ class CacheAwareHysteresisController(BaseController):
         append_jsonl(self.events_path, row)
 
 
+class CacheGatedGrowthController(CacheAwareHysteresisController):
+    def __init__(
+        self,
+        total_agents: int,
+        events_path: Path,
+        metrics_reader: Callable[[], LiveMetricSnapshot],
+        cache_low: float = 0.28,
+        cache_high: float = 0.55,
+        ewma_alpha: float = 0.35,
+        u_high: float = 0.94,
+        queue_high: int = 4,
+        pending_high: int = 120000,
+        cooldown_ticks: int = 1,
+        w_step: int = 1,
+        w0: int = 4,
+        w_min: int = 4,
+        w_max: int | None = None,
+        update_interval_s: float = 2.0,
+    ) -> None:
+        super().__init__(
+            total_agents=total_agents,
+            events_path=events_path,
+            metrics_reader=metrics_reader,
+            cache_low=cache_low,
+            cache_high=cache_high,
+            ewma_alpha=ewma_alpha,
+            u_low=0.0,
+            u_high=u_high,
+            queue_high=queue_high,
+            pending_high=pending_high,
+            cooldown_ticks=cooldown_ticks,
+            w0=w0,
+            w_min=w_min,
+            w_max=w_max,
+            update_interval_s=update_interval_s,
+        )
+        self.w_step = max(1, w_step)
+
+    async def _sample_and_update(self, final: bool = False) -> None:
+        snapshot = await asyncio.to_thread(self.metrics_reader)
+        old_window = self.window
+        recent_ratio = snapshot.recent_cached_token_ratio
+        if recent_ratio is None:
+            recent_ratio = snapshot.cached_token_ratio
+        if recent_ratio is not None:
+            if self.cached_ratio_ewma is None:
+                self.cached_ratio_ewma = recent_ratio
+            else:
+                self.cached_ratio_ewma = (
+                    self.ewma_alpha * recent_ratio
+                    + (1.0 - self.ewma_alpha) * self.cached_ratio_ewma
+                )
+
+        token_usage = snapshot.token_usage
+        queue_req = snapshot.queue_req or 0
+        pending_token = snapshot.pending_token or 0
+        next_window = old_window
+        action = "hold"
+        reason = "missing_exact_scheduler_metric"
+        if token_usage is not None:
+            reason = "cache_gate_hold"
+            if token_usage >= self.u_high and (
+                self.cached_ratio_ewma is None or self.cached_ratio_ewma < self.cache_low
+            ):
+                next_window = old_window - self.w_step
+                action = "decrease"
+                reason = "token_usage_high_and_cache_ewma_low_floor_guarded"
+                self.cooldown_remaining = self.cooldown_ticks
+            elif queue_req >= self.queue_high or pending_token >= self.pending_high:
+                next_window = old_window - self.w_step
+                action = "decrease"
+                reason = "queue_or_pending_token_high_floor_guarded"
+                self.cooldown_remaining = self.cooldown_ticks
+            elif self.cooldown_remaining > 0:
+                self.cooldown_remaining -= 1
+                reason = "cooldown_hold"
+            elif (
+                self.cached_ratio_ewma is not None
+                and self.cached_ratio_ewma >= self.cache_high
+                and queue_req < self.queue_high
+                and pending_token < self.pending_high
+            ):
+                next_window = old_window + self.w_step
+                action = "increase"
+                reason = "cache_ewma_healthy_and_queue_low"
+
+        next_window = max(self.w_min, min(next_window, self.w_max))
+        self.window = next_window
+        async with self._cond:
+            self._cond.notify_all()
+        pending_agents = max(0, self.total_agents - self.active_agents - self.finished_agents)
+        self._record_event(
+            action="final_sample" if final else action,
+            reason=f"{reason}{'_final' if final else ''}",
+            window=old_window,
+            next_window=next_window,
+            pending_agents=pending_agents,
+            metric_type="exact_sglang_log",
+            extra={
+                "scheduler_points": snapshot.scheduler_points,
+                "request_count": snapshot.request_count,
+                "token_usage": snapshot.token_usage,
+                "running_req": snapshot.running_req,
+                "queue_req": snapshot.queue_req,
+                "pending_token": snapshot.pending_token,
+                "cached_token_ratio": snapshot.cached_token_ratio,
+                "recent_cached_token_ratio": snapshot.recent_cached_token_ratio,
+                "cached_ratio_ewma": self.cached_ratio_ewma,
+                "cooldown_remaining": self.cooldown_remaining,
+                "w_floor": self.w_min,
+                "w_step": self.w_step,
+                "metrics_source": snapshot.source,
+            },
+        )
+
+
 class PhaseWindowController(BaseController):
     def __init__(
         self,
@@ -641,6 +757,126 @@ class PhaseWindowController(BaseController):
             "metric_type": "progress_schedule",
             "warmup_steps": self.warmup_steps,
             "warm_agents": self._warm_agents(),
+        }
+        if extra:
+            row.update(extra)
+        append_jsonl(self.events_path, row)
+
+
+class TailOpenController(BaseController):
+    def __init__(
+        self,
+        total_agents: int,
+        events_path: Path,
+        w_base: int = 4,
+        w_tail: int = 8,
+        tail_finished_ratio: float = 0.5,
+        tail_progress_steps: int = 5,
+    ) -> None:
+        super().__init__(total_agents, events_path)
+        self.w_base = max(1, min(w_base, total_agents))
+        self.w_tail = max(self.w_base, min(w_tail, total_agents))
+        self.tail_finished_ratio = max(0.0, min(tail_finished_ratio, 1.0))
+        self.tail_progress_steps = max(1, tail_progress_steps)
+        self.window = self.w_base
+        self.agent_progress: dict[int, int] = {}
+        self._cond = asyncio.Condition()
+
+    def _tail_progress_agents(self) -> int:
+        return sum(1 for steps in self.agent_progress.values() if steps >= self.tail_progress_steps)
+
+    def _target_window(self) -> tuple[int, str]:
+        finished_ratio = self.finished_agents / max(1, self.total_agents)
+        if finished_ratio >= self.tail_finished_ratio:
+            return self.w_tail, "tail_open_finished_ratio"
+        if self._tail_progress_agents() >= self.w_base:
+            return self.w_tail, "tail_open_progress_threshold"
+        return self.w_base, "base_cache_window"
+
+    async def acquire_agent(self) -> None:
+        async with self._cond:
+            target, reason = self._target_window()
+            self.window = target
+            while self.active_agents >= self.window:
+                await self._cond.wait()
+                target, reason = self._target_window()
+                self.window = target
+            self.active_agents += 1
+            pending = max(0, self.total_agents - self.active_agents - self.finished_agents)
+            self._record_event(
+                action="admit",
+                reason=reason,
+                window=target,
+                next_window=target,
+                pending_agents=pending,
+            )
+
+    def release_agent(self) -> None:
+        self.active_agents -= 1
+        self.finished_agents += 1
+
+        async def notify() -> None:
+            async with self._cond:
+                target, _reason = self._target_window()
+                self.window = target
+                self._cond.notify_all()
+
+        asyncio.create_task(notify())
+
+    def record_step_progress(self, agent_id: int, completed_steps: int) -> None:
+        self.agent_progress[agent_id] = max(self.agent_progress.get(agent_id, 0), completed_steps)
+        old_window = self.window
+        next_window, reason = self._target_window()
+        self.window = next_window
+        pending = max(0, self.total_agents - self.active_agents - self.finished_agents)
+        self._record_event(
+            action="progress",
+            reason=reason,
+            window=old_window,
+            next_window=next_window,
+            pending_agents=pending,
+            extra={
+                "agent_id": agent_id,
+                "completed_steps": completed_steps,
+                "tail_progress_steps": self.tail_progress_steps,
+                "tail_progress_agents": self._tail_progress_agents(),
+            },
+        )
+
+        async def notify() -> None:
+            async with self._cond:
+                self._cond.notify_all()
+
+        asyncio.create_task(notify())
+
+    def _record_event(
+        self,
+        *,
+        action: str,
+        reason: str,
+        window: int,
+        next_window: int,
+        pending_agents: int,
+        extra: dict[str, Any] | None = None,
+    ) -> None:
+        row = {
+            "timestamp": time.time(),
+            "W_t": window,
+            "W_next": next_window,
+            "U_t": None,
+            "H_t": None,
+            "active_agents": self.active_agents,
+            "pending_agents": pending_agents,
+            "finished_agents": self.finished_agents,
+            "action": action,
+            "reason": reason,
+            "metric_type": "progress_schedule",
+            "W_base": self.w_base,
+            "W_tail": self.w_tail,
+            "tail_finished_ratio": self.tail_finished_ratio,
+            "finished_ratio": self.finished_agents / max(1, self.total_agents),
+            "tail_progress_steps": self.tail_progress_steps,
+            "tail_progress_agents": self._tail_progress_agents(),
         }
         if extra:
             row.update(extra)

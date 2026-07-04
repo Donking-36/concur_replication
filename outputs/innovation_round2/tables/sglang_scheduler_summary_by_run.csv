@@ -1,0 +1,11 @@
+run_id,controller_label,scheduler_points,prefill_batches,decode_batches,max_token_usage,mean_token_usage,max_running_req,max_queue_req,max_pending_token,prefill_new_tokens_total,prefill_cached_tokens_total,max_input_throughput_tokens_s,max_gen_throughput_tokens_s
+20260704-143615-tail-open-v1-Qwen3-32B-round2-tail-open-v1-b8-seed0-b8,tail_open_v1,74,48,26,0.92,0.5168918918918919,8,5,51226,227523,426473,5345.84,141.36
+20260704-143810-cache-gate-v1-Qwen3-32B-round2-cache-gate-v1-b8-seed0-b8,cache_gate_v1,77,51,26,0.93,0.5180519480519481,6,3,27895,218560,435447,5437.82,105.13
+20260704-144004-tail-open-v1-Qwen3-32B-round2-tail-open-v1-b8-seed1-b8,tail_open_v1,81,58,23,0.97,0.5995061728395061,8,5,77488,300188,354241,5303.34,141.29
+20260704-144210-cache-gate-v1-Qwen3-32B-round2-cache-gate-v1-b8-seed1-b8,cache_gate_v1,79,53,26,0.97,0.5441772151898734,7,5,49972,238830,415588,5430.54,105.98
+20260704-144410-tail-open-v1-Qwen3-32B-round2-tail-open-v1-b8-seed2-b8,tail_open_v1,81,57,24,0.97,0.5639506172839506,9,5,60046,297925,356622,5323.5,141.28
+20260704-144617-cache-gate-v1-Qwen3-32B-round2-cache-gate-v1-b8-seed2-b8,cache_gate_v1,75,51,24,0.97,0.5689333333333333,9,4,33732,238980,415567,5489.11,121.39
+20260704-144811-tail-open-v1-Qwen3-32B-round2-tail-open-v1-b12-seed0-b12,tail_open_v1,139,103,36,0.9,0.5576978417266187,10,6,108762,655620,339969,5503.52,146.06
+20260704-145205-cache-gate-v1-Qwen3-32B-round2-cache-gate-v1-b12-seed0-b12,cache_gate_v1,128,94,34,0.99,0.602734375,10,6,126409,590313,405286,5282.26,153.18
+20260704-145541-tail-open-v1-Qwen3-32B-round2-tail-open-v1-b16-seed0-b16,tail_open_v1,177,132,45,0.96,0.6005084745762712,10,6,108762,806540,545141,5503.79,146.05
+20260704-150029-cache-gate-v1-Qwen3-32B-round2-cache-gate-v1-b16-seed0-b16,cache_gate_v1,169,121,48,0.99,0.5982840236686391,10,6,126409,688267,663424,5317.75,142.05

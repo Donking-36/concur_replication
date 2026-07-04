@@ -26,8 +26,15 @@ V2_CONTROLLERS = [
     "concur_dynamic_v2",
     "concur_cache_aware_v1",
     "phase_window_v1",
+    "tail_open_v1",
+    "cache_gate_v1",
 ]
-INNOVATION_CONTROLLERS = {"concur_cache_aware_v1", "phase_window_v1"}
+INNOVATION_CONTROLLERS = {
+    "concur_cache_aware_v1",
+    "phase_window_v1",
+    "tail_open_v1",
+    "cache_gate_v1",
+}
 FIGURE_COLORS = {
     "no_control": "#4C78A8",
     "request_cap_4": "#F58518",
@@ -37,6 +44,8 @@ FIGURE_COLORS = {
     "concur_dynamic_v2": "#E45756",
     "concur_cache_aware_v1": "#9467BD",
     "phase_window_v1": "#8C564B",
+    "tail_open_v1": "#2F855A",
+    "cache_gate_v1": "#2563EB",
 }
 
 
@@ -1176,10 +1185,25 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
     findings = []
     cache_b8 = row_for("b8", "concur_cache_aware_v1")
     phase_b8 = row_for("b8", "phase_window_v1")
+    tail_b8 = row_for("b8", "tail_open_v1")
+    gate_b8 = row_for("b8", "cache_gate_v1")
     dynamic_b8 = baseline_by_controller.get("concur_dynamic_v2")
     fixed4_b8 = baseline_by_controller.get("fixed_window_4")
     fixed8_b8 = baseline_by_controller.get("fixed_window_8")
     request4_b8 = baseline_by_controller.get("request_cap_4")
+    b8_innovation_rows = [
+        row
+        for (scenario, _controller), row in innovation_by_key.items()
+        if scenario == "b8" and latency(row) is not None
+    ]
+    if b8_innovation_rows:
+        best_b8 = min(b8_innovation_rows, key=lambda row: latency(row) or math.inf)
+        if fixed4_b8:
+            findings.append(
+                f"- Best available b8 innovation in this report is `{best_b8.get('controller')}` at "
+                f"`{fmt_seconds(latency(best_b8))}`; compared with `fixed_window_4` "
+                f"`{fmt_seconds(latency(fixed4_b8))}`, it is `{fmt_speedup(best_b8, fixed4_b8)}`."
+            )
     if cache_b8 and dynamic_b8:
         findings.append(
             "- `concur_cache_aware_v1` meets the b8 queue-pressure target versus `concur_dynamic_v2`: "
@@ -1199,6 +1223,18 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
             f"`{_fmt(cache_ratio(phase_b8))}` vs `fixed_window_8` `{_fmt(cache_ratio(fixed8_b8))}`, and latency "
             f"`{fmt_seconds(latency(phase_b8))}` vs `request_cap_4` `{fmt_seconds(latency(request4_b8))}`. "
             "It remains slower than `concur_cache_aware_v1` and `fixed_window_4` on b8."
+        )
+    if tail_b8 and fixed4_b8:
+        findings.append(
+            "- `tail_open_v1` tests the fixed-window tail-opening hypothesis: "
+            f"latency `{fmt_seconds(latency(tail_b8))}` vs `fixed_window_4` `{fmt_seconds(latency(fixed4_b8))}`, "
+            f"cached ratio `{_fmt(cache_ratio(tail_b8))}` vs `{_fmt(cache_ratio(fixed4_b8))}`."
+        )
+    if gate_b8 and dynamic_b8:
+        findings.append(
+            "- `cache_gate_v1` tests a cache-aware safety floor: "
+            f"latency `{fmt_seconds(latency(gate_b8))}` vs `concur_dynamic_v2` `{fmt_seconds(latency(dynamic_b8))}`, "
+            f"queue mean `{_fmt(queue_req(gate_b8))}` vs `{_fmt(queue_req(dynamic_b8))}`."
         )
 
     for scenario in ["b8_long_ctxfit", "b12_medium", "b16_medium"]:
@@ -1230,8 +1266,9 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
     if not findings:
         findings.append("- No complete innovation summary rows were available when the report was generated.")
 
+    total_success_rows = sum(int(row.get("n") or 0) for row in summary_rows)
     limitations = [
-        "- All queued innovation runs completed successfully: 12 done, 0 failed.",
+        f"- All successful innovation runs discovered in this report are summarized: {total_success_rows} success rows.",
         "- b12, b16, and b8-long ctxfit innovation scenarios currently have one seed each; treat those results as directional until repeated.",
         "- Claims remain limited to single-GPU Qwen3-32B BF16 on SGLang with this local harness.",
     ]
@@ -1263,7 +1300,7 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
         "",
         "## 1. Goal",
         "",
-        "Evaluate two lightweight scheduling innovations on top of the completed Qwen3-32B single-GPU v2 reproduction: `concur_cache_aware_v1` and `phase_window_v1`.",
+        "Evaluate lightweight scheduling innovations on top of the completed Qwen3-32B single-GPU v2 reproduction. Round 1 covers `concur_cache_aware_v1` and `phase_window_v1`; round 2 covers `tail_open_v1` and `cache_gate_v1`.",
         "",
         "## 2. Baseline from v2 Reproduction",
         "",
@@ -1277,30 +1314,36 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
         "",
         "Uses harness progress only: admit a small initial window to build prefix cache, then ramp admission wider after early steps complete.",
         "",
-        "## 5. Experiment Matrix",
+        "## 5. Round 2 Additions",
         "",
-        "Innovation runs are stored separately under `outputs/innovation/runs`; tables, figures, and this report are under `outputs/innovation/`.",
+        "`tail_open_v1` keeps a fixed-window-4 style early phase and opens admission later based on progress or finished-agent ratio. `cache_gate_v1` uses exact SGLang metrics with a fixed-window-4 safety floor and only grows when cache and queue health permit.",
         "",
-        "## 6. Results",
+        "## 6. Experiment Matrix",
+        "",
+        "Innovation runs are stored in the configured innovation output root; tables, figures, and this report are generated into the corresponding `tables`, `figures`, and `reports` directories.",
+        "",
+        "## 7. Results",
         "",
         innovation_table,
         "",
-        "## 7. Success Criteria",
+        "## 8. Success Criteria",
         "",
         "- `concur_cache_aware_v1`: lower b8 queue pressure than `concur_dynamic_v2` while keeping latency interpretable.",
         "- `phase_window_v1`: cached ratio above fixed_window_8 and latency below request_cap_4 on b8, if possible.",
+        "- `tail_open_v1`: keep fixed-window-4 cache behavior early, then reduce tail latency by opening admission later.",
+        "- `cache_gate_v1`: use exact metrics with a fixed-window-4 safety floor and grow only when cache/queue health permits.",
         "",
-        "## 8. Findings Against Criteria",
+        "## 9. Findings Against Criteria",
         "",
         "\n".join(findings),
         "",
-        "## 9. Failures and Limitations",
+        "## 10. Failures and Limitations",
         "",
         "\n".join(limitations),
         "",
-        "## 10. Recommendation",
+        "## 11. Recommendation",
         "",
-        "`concur_cache_aware_v1` is the leading innovation candidate for b8 and b16. Keep `phase_window_v1` as a low-instrumentation baseline, but do not claim it is the latency winner. Next tuning should target the cache-aware queue/pending-token guard under b12 and long-context pressure, then repeat b12/b16/long scenarios across seeds.",
+        "Select claims from the rows actually present in this report. Treat b12/b16 single-seed results as directional, and keep the strongest repeated b8 result as the primary evidence.",
         "",
     ]
     out.parent.mkdir(parents=True, exist_ok=True)

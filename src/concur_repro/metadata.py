@@ -51,7 +51,7 @@ def controller_metadata(config: dict[str, Any], total_agents: int | None = None)
         effective_w_max = min(w_max, agents_for_clamp)
         effective_agent_window = _clamp_window(w0, agents_for_clamp, lower=w_min, upper=w_max)
         label = "concur_dynamic"
-    elif strategy in {"concur_dynamic_v2", "concur_cache_aware_v1"}:
+    elif strategy in {"concur_dynamic_v2", "concur_cache_aware_v1", "cache_gate_v1"}:
         w0 = int(config.get("W_0", 4) or 4)
         w_min = int(config.get("W_min", 1) or 1)
         configured_w_max = _int_or_none(config.get("W_max"))
@@ -59,6 +59,15 @@ def controller_metadata(config: dict[str, Any], total_agents: int | None = None)
         effective_w_max = min(w_max, agents_for_clamp)
         effective_agent_window = _clamp_window(w0, agents_for_clamp, lower=w_min, upper=w_max)
         label = strategy
+    elif strategy == "tail_open_v1":
+        agent_window = int(config.get("W_base", 4) or 4)
+        effective_agent_window = _clamp_window(agent_window, agents_for_clamp)
+        configured_w_max = _int_or_none(config.get("W_tail"))
+        w_max = configured_w_max if configured_w_max is not None else agents_for_clamp
+        effective_w_max = min(w_max, agents_for_clamp)
+        w0 = agent_window
+        w_min = agent_window
+        label = "tail_open_v1"
     elif strategy == "phase_window_v1":
         agent_window = int(config.get("W_warmup", 4) or 4)
         effective_agent_window = _clamp_window(agent_window, agents_for_clamp)
