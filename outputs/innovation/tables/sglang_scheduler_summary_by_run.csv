@@ -1,0 +1,13 @@
+run_id,controller_label,scheduler_points,prefill_batches,decode_batches,max_token_usage,mean_token_usage,max_running_req,max_queue_req,max_pending_token,prefill_new_tokens_total,prefill_cached_tokens_total,max_input_throughput_tokens_s,max_gen_throughput_tokens_s
+20260704-103922-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed0-b8,concur_cache_aware_v1,76,50,26,0.92,0.5127631578947368,6,3,22109,212689,441318,5342.39,88.42
+20260704-104116-phase-window-v1--32B-innovation-phase-window-v1-b8-seed0-b8,phase_window_v1,87,63,24,0.97,0.5756321839080459,8,6,94791,358113,295862,5329.66,118.49
+20260704-104334-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed1-b8,concur_cache_aware_v1,78,52,26,0.97,0.5262820512820513,7,3,47082,227157,427261,5295.0,107.88
+20260704-104534-phase-window-v1--32B-innovation-phase-window-v1-b8-seed1-b8,phase_window_v1,95,69,26,0.97,0.5353684210526316,8,6,100643,407862,246541,5294.46,139.46
+20260704-104811-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed2-b8,concur_cache_aware_v1,77,51,26,0.97,0.5187012987012987,6,4,32562,215598,438960,5269.58,108.81
+20260704-105005-phase-window-v1--32B-innovation-phase-window-v1-b8-seed2-b8,phase_window_v1,91,66,25,0.97,0.5625274725274725,9,6,89109,393938,260594,5279.68,111.73
+20260704-105418-concur-cache-aware-v1-tion-cache-aware-v1-b8-long-ctxfit-seed0-b8,concur_cache_aware_v1,252,185,67,0.98,0.5897222222222223,5,6,192937,1312170,595852,5367.19,88.37
+20260704-110248-phase-window-v1-ion-phase-window-v1-b8-long-ctxfit-seed0-b8,phase_window_v1,302,236,66,0.98,0.5841721854304636,7,7,243382,1713355,194667,5295.78,116.13
+20260704-111243-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b12-seed0-b12,concur_cache_aware_v1,136,102,34,0.98,0.6044117647058823,9,6,120583,650278,345258,5286.51,144.66
+20260704-111631-phase-window-v1-32B-innovation-phase-window-v1-b12-seed0-b12,phase_window_v1,129,95,34,0.97,0.5920930232558139,8,6,97686,617253,378346,5291.39,141.16
+20260704-112013-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b16-seed0-b16,concur_cache_aware_v1,178,131,47,0.98,0.6004494382022472,9,6,120588,802584,549065,5315.85,156.06
+20260704-112508-phase-window-v1-32B-innovation-phase-window-v1-b16-seed0-b16,phase_window_v1,175,132,43,0.99,0.6372,8,6,95521,872104,479598,5321.59,141.02

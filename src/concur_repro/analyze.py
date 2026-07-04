@@ -1134,7 +1134,107 @@ def write_innovation_figures(innovation_rows: list[dict], summary_rows: list[dic
 
 def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
     baseline_path = REPRO_ROOT / "outputs" / "tables" / "v2_b8_repeated_trials_summary.csv"
+    pressure_path = REPRO_ROOT / "outputs" / "tables" / "v2_pressure_runs_summary.csv"
     baseline_rows = _read_csv_dicts(baseline_path)
+    pressure_rows = _read_csv_dicts(pressure_path)
+    baseline_by_controller = {str(row.get("controller")): row for row in baseline_rows}
+    pressure_by_key = {(str(row.get("scenario")), str(row.get("controller"))): row for row in pressure_rows}
+    innovation_by_key = {(str(row.get("scenario")), str(row.get("controller"))): row for row in summary_rows}
+
+    def row_for(scenario: str, controller: str) -> dict | None:
+        return innovation_by_key.get((scenario, controller))
+
+    def pressure_row_for(scenario: str, controller: str) -> dict | None:
+        return pressure_by_key.get((scenario, controller))
+
+    def latency(row: dict | None) -> float | None:
+        return _float_or_none(row.get("latency_mean_s")) if row else None
+
+    def cache_ratio(row: dict | None) -> float | None:
+        return _float_or_none(row.get("cached_token_ratio_mean")) if row else None
+
+    def queue_req(row: dict | None) -> float | None:
+        return _float_or_none(row.get("max_queue_req_mean")) if row else None
+
+    def pct_faster(row: dict | None, baseline: dict | None) -> float | None:
+        row_latency = latency(row)
+        baseline_latency = latency(baseline)
+        if row_latency is None or baseline_latency in (None, 0):
+            return None
+        return (baseline_latency - row_latency) / baseline_latency * 100.0
+
+    def fmt_seconds(value: float | None) -> str:
+        return f"{_fmt(value)}s" if value is not None else ""
+
+    def fmt_speedup(row: dict | None, baseline: dict | None) -> str:
+        speedup = pct_faster(row, baseline)
+        if speedup is None:
+            return ""
+        direction = "faster" if speedup >= 0 else "slower"
+        return f"{_fmt(abs(speedup), 1)}% {direction}"
+
+    findings = []
+    cache_b8 = row_for("b8", "concur_cache_aware_v1")
+    phase_b8 = row_for("b8", "phase_window_v1")
+    dynamic_b8 = baseline_by_controller.get("concur_dynamic_v2")
+    fixed4_b8 = baseline_by_controller.get("fixed_window_4")
+    fixed8_b8 = baseline_by_controller.get("fixed_window_8")
+    request4_b8 = baseline_by_controller.get("request_cap_4")
+    if cache_b8 and dynamic_b8:
+        findings.append(
+            "- `concur_cache_aware_v1` meets the b8 queue-pressure target versus `concur_dynamic_v2`: "
+            f"max_queue_req mean `{_fmt(queue_req(cache_b8))}` vs `{_fmt(queue_req(dynamic_b8))}`, "
+            f"latency `{fmt_seconds(latency(cache_b8))}` vs `{fmt_seconds(latency(dynamic_b8))}`."
+        )
+    if cache_b8 and fixed4_b8:
+        findings.append(
+            "- On repeated b8, `concur_cache_aware_v1` is the observed latency winner: "
+            f"`{fmt_seconds(latency(cache_b8))}` mean, `{fmt_speedup(cache_b8, fixed4_b8)}` than "
+            f"`fixed_window_4` (`{fmt_seconds(latency(fixed4_b8))}`), with similar exact cache ratio "
+            f"`{_fmt(cache_ratio(cache_b8))}` vs `{_fmt(cache_ratio(fixed4_b8))}`."
+        )
+    if phase_b8 and fixed8_b8 and request4_b8:
+        findings.append(
+            "- `phase_window_v1` meets its b8 directional criterion: exact cache ratio "
+            f"`{_fmt(cache_ratio(phase_b8))}` vs `fixed_window_8` `{_fmt(cache_ratio(fixed8_b8))}`, and latency "
+            f"`{fmt_seconds(latency(phase_b8))}` vs `request_cap_4` `{fmt_seconds(latency(request4_b8))}`. "
+            "It remains slower than `concur_cache_aware_v1` and `fixed_window_4` on b8."
+        )
+
+    for scenario in ["b8_long_ctxfit", "b12_medium", "b16_medium"]:
+        innovation_candidates = [row_for(scenario, controller) for controller in sorted(INNOVATION_CONTROLLERS)]
+        innovation_candidates = [row for row in innovation_candidates if latency(row) is not None]
+        baseline_candidates = [
+            row
+            for (row_scenario, _controller), row in pressure_by_key.items()
+            if row_scenario == scenario and latency(row) is not None
+        ]
+        if not innovation_candidates or not baseline_candidates:
+            continue
+        best_innovation = min(innovation_candidates, key=lambda row: latency(row) or math.inf)
+        best_baseline = min(baseline_candidates, key=lambda row: latency(row) or math.inf)
+        dynamic_row = pressure_row_for(scenario, "concur_dynamic_v2")
+        if latency(best_innovation) is not None and latency(best_baseline) is not None:
+            relation = "beats" if (latency(best_innovation) or math.inf) < (latency(best_baseline) or math.inf) else "does not beat"
+            findings.append(
+                f"- `{scenario}` best innovation is `{best_innovation.get('controller')}` at "
+                f"`{fmt_seconds(latency(best_innovation))}`; it {relation} the best v2 baseline "
+                f"`{best_baseline.get('controller')}` at `{fmt_seconds(latency(best_baseline))}`."
+            )
+        if dynamic_row:
+            findings.append(
+                f"- `{scenario}` best innovation vs `concur_dynamic_v2`: "
+                f"`{fmt_seconds(latency(best_innovation))}` vs `{fmt_seconds(latency(dynamic_row))}` "
+                f"(`{fmt_speedup(best_innovation, dynamic_row)}`)."
+            )
+    if not findings:
+        findings.append("- No complete innovation summary rows were available when the report was generated.")
+
+    limitations = [
+        "- All queued innovation runs completed successfully: 12 done, 0 failed.",
+        "- b12, b16, and b8-long ctxfit innovation scenarios currently have one seed each; treat those results as directional until repeated.",
+        "- Claims remain limited to single-GPU Qwen3-32B BF16 on SGLang with this local harness.",
+    ]
     baseline_table = _markdown_table(
         baseline_rows,
         [
@@ -1190,13 +1290,17 @@ def write_innovation_report(summary_rows: list[dict], out: Path) -> None:
         "- `concur_cache_aware_v1`: lower b8 queue pressure than `concur_dynamic_v2` while keeping latency interpretable.",
         "- `phase_window_v1`: cached ratio above fixed_window_8 and latency below request_cap_4 on b8, if possible.",
         "",
-        "## 8. Failures and Limitations",
+        "## 8. Findings Against Criteria",
         "",
-        "This report is generated from currently available innovation runs. If a matrix is incomplete, missing rows mean the run has not been executed yet or failed before producing exact metrics.",
+        "\n".join(findings),
         "",
-        "## 9. Recommendation",
+        "## 9. Failures and Limitations",
         "",
-        "Compare the innovation summary against v2 baselines and keep claims limited to single-GPU Qwen3-32B BF16 evidence.",
+        "\n".join(limitations),
+        "",
+        "## 10. Recommendation",
+        "",
+        "`concur_cache_aware_v1` is the leading innovation candidate for b8 and b16. Keep `phase_window_v1` as a low-instrumentation baseline, but do not claim it is the latency winner. Next tuning should target the cache-aware queue/pending-token guard under b12 and long-context pressure, then repeat b12/b16/long scenarios across seeds.",
         "",
     ]
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,5 @@
 schema_version: 2
-updated_at: '2026-07-04T02:08:34+08:00'
+updated_at: '2026-07-04T11:30:08+08:00'
 policy:
   root: /data/3.8T-1/yue
   single_gpu_only: true
@@ -8,56 +8,164 @@ policy:
   no_external_write_roots: true
   atomic_updates: true
   output_root: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation
-pending:
+pending: []
+running: null
+done:
 - name: innovation_cache_aware_v1_b8_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed0_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
+  status_note: success
+  started_at: '2026-07-04T10:37:05+08:00'
+  runner_updated_at: '2026-07-04T10:39:22+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-103922-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-103922-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed0-b8
+  finished_at: '2026-07-04T10:41:16+08:00'
 - name: innovation_phase_window_v1_b8_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed0_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
+  status_note: success
+  started_at: '2026-07-04T10:41:16+08:00'
+  runner_updated_at: '2026-07-04T10:41:16+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-104116-phase-window-v1--32B-innovation-phase-window-v1-b8-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-104116-phase-window-v1--32B-innovation-phase-window-v1-b8-seed0-b8
+  finished_at: '2026-07-04T10:43:34+08:00'
 - name: innovation_cache_aware_v1_b8_seed1_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed1_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
+  status_note: success
+  started_at: '2026-07-04T10:43:34+08:00'
+  runner_updated_at: '2026-07-04T10:43:34+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-104334-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-104334-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed1-b8
+  finished_at: '2026-07-04T10:45:34+08:00'
 - name: innovation_phase_window_v1_b8_seed1_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed1_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
+  status_note: success
+  started_at: '2026-07-04T10:45:34+08:00'
+  runner_updated_at: '2026-07-04T10:45:34+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-104534-phase-window-v1--32B-innovation-phase-window-v1-b8-seed1-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-104534-phase-window-v1--32B-innovation-phase-window-v1-b8-seed1-b8
+  finished_at: '2026-07-04T10:48:10+08:00'
 - name: innovation_cache_aware_v1_b8_seed2_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_seed2_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
+  status_note: success
+  started_at: '2026-07-04T10:48:11+08:00'
+  runner_updated_at: '2026-07-04T10:48:11+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-104811-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-104811-concur-cache-aware-v1-3-32B-innovation-cache-aware-v1-b8-seed2-b8
+  finished_at: '2026-07-04T10:50:05+08:00'
 - name: innovation_phase_window_v1_b8_seed2_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_seed2_prefix_v2.yaml
-  status_note: queued first-pass b8 repeated trial
-running: null
-done: []
-failed: []
-planned:
+  status_note: success
+  started_at: '2026-07-04T10:50:05+08:00'
+  runner_updated_at: '2026-07-04T10:50:05+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-105005-phase-window-v1--32B-innovation-phase-window-v1-b8-seed2-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-105005-phase-window-v1--32B-innovation-phase-window-v1-b8-seed2-b8
+  finished_at: '2026-07-04T10:52:34+08:00'
 - name: innovation_cache_aware_v1_b8_long_ctxfit_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b8_long_ctxfit_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T10:54:18+08:00'
+  runner_updated_at: '2026-07-04T10:54:18+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-105418-concur-cache-aware-v1-tion-cache-aware-v1-b8-long-ctxfit-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-105418-concur-cache-aware-v1-tion-cache-aware-v1-b8-long-ctxfit-seed0-b8
+  finished_at: '2026-07-04T11:02:48+08:00'
 - name: innovation_phase_window_v1_b8_long_ctxfit_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b8_long_ctxfit_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T11:02:48+08:00'
+  runner_updated_at: '2026-07-04T11:02:48+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-110248-phase-window-v1-ion-phase-window-v1-b8-long-ctxfit-seed0-b8
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-110248-phase-window-v1-ion-phase-window-v1-b8-long-ctxfit-seed0-b8
+  finished_at: '2026-07-04T11:12:43+08:00'
 - name: innovation_cache_aware_v1_b12_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b12_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T11:12:43+08:00'
+  runner_updated_at: '2026-07-04T11:12:43+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-111243-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b12-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-111243-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b12-seed0-b12
+  finished_at: '2026-07-04T11:16:31+08:00'
 - name: innovation_phase_window_v1_b12_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b12_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T11:16:31+08:00'
+  runner_updated_at: '2026-07-04T11:16:31+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-111631-phase-window-v1-32B-innovation-phase-window-v1-b12-seed0-b12
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-111631-phase-window-v1-32B-innovation-phase-window-v1-b12-seed0-b12
+  finished_at: '2026-07-04T11:20:13+08:00'
 - name: innovation_cache_aware_v1_b16_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/cache_aware_v1_b16_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T11:20:13+08:00'
+  runner_updated_at: '2026-07-04T11:20:13+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: concur_cache_aware_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-112013-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b16-seed0-b16
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-112013-concur-cache-aware-v1--32B-innovation-cache-aware-v1-b16-seed0-b16
+  finished_at: '2026-07-04T11:25:08+08:00'
 - name: innovation_phase_window_v1_b16_seed0_prefix_v2
   phase: INNOVATION
   config_path: /data/3.8T-1/yue/concur_qwen_repro/configs/experiments/phase_window_v1_b16_seed0_prefix_v2.yaml
-  status_note: deferred until b8 repeated trials are analyzed
+  status_note: success
+  started_at: '2026-07-04T11:25:08+08:00'
+  runner_updated_at: '2026-07-04T11:25:08+08:00'
+  requested_gpu: '0'
+  selected_gpu: '0'
+  strategy: phase_window_v1
+  workload_version: prefix_stable_v2
+  run_id: 20260704-112508-phase-window-v1-32B-innovation-phase-window-v1-b16-seed0-b16
+  run_dir: /data/3.8T-1/yue/concur_qwen_repro/outputs/innovation/runs/20260704-112508-phase-window-v1-32B-innovation-phase-window-v1-b16-seed0-b16
+  finished_at: '2026-07-04T11:30:08+08:00'
+failed: []
+planned: []
